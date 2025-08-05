@@ -1,67 +1,118 @@
-import { BarChart3, FileText, Monitor } from 'lucide-react';
+import { BarChart3, Database, FileText, Monitor, Network } from 'lucide-react';
 import { useState } from 'react';
 import './App.css';
 import ArchitecturePage from './components/ArchitecturePage';
 import DashboardDemo from './components/DashboardDemo';
+import DataMeshModule from './components/DataMeshModule';
 import OverviewPage from './components/OverviewPage';
 
 const App = () => {
-  const [currentPage, setCurrentPage] = useState('overview');
+  const [currentPage, setCurrentPage] = useState('data-mesh');
+  const [currentSubPage, setCurrentSubPage] = useState('overview');
+
+  const handleMainNavigation = (page) => {
+    setCurrentPage(page);
+    // Set default sub-page when switching main sections
+    if (page === 'data-platform') {
+      setCurrentSubPage('overview');
+    }
+  };
+
+  const handleSubNavigation = (subPage) => {
+    setCurrentSubPage(subPage);
+  };
 
   const renderNavBar = () => (
     <nav className="main-navbar">
       <div className="navbar-content">
         <div className="navbar-brand">
           <img 
-            src="/capgemini-logo.png" 
-            alt="Capgemini" 
+            src="/capgemini-logo.png"
+            alt="Capgemini"
             style={{ width: '200px', height: '50px' }}
           />
-          <span>Enterprise Chargeback</span>
+          <span>Enterprise Data Management</span>
         </div>
         <div className="navbar-links">
           <button 
-            className={`nav-link ${currentPage === 'overview' ? 'active' : ''}`}
-            onClick={() => setCurrentPage('overview')}
+            className={`nav-link ${currentPage === 'data-mesh' ? 'active' : ''}`}
+            onClick={() => handleMainNavigation('data-mesh')}
           >
-            <FileText size={18} />
-            Overview & Slides
+            <Network size={18} />
+            Data Mesh Strategy
           </button>
           <button 
-            className={`nav-link ${currentPage === 'architecture' ? 'active' : ''}`}
-            onClick={() => setCurrentPage('architecture')}
+            className={`nav-link ${currentPage === 'data-platform' ? 'active' : ''}`}
+            onClick={() => handleMainNavigation('data-platform')}
           >
-            <BarChart3 size={18} />
-            Data Architecture
-          </button>
-          <button 
-            className={`nav-link ${currentPage === 'demo' ? 'active' : ''}`}
-            onClick={() => setCurrentPage('demo')}
-          >
-            <Monitor size={18} />
-            Live Demo
+            <Database size={18} />
+            Data Platform Management
           </button>
         </div>
       </div>
     </nav>
   );
 
-  const renderPageContent = () => {
-    switch (currentPage) {
-      case 'overview':
-        return <OverviewPage />;
-      case 'architecture':
-        return <ArchitecturePage />;
-      case 'demo':
-        return <DashboardDemo />;
-      default:
-        return <OverviewPage />;
+  const renderSubNavBar = () => {
+    if (currentPage === 'data-platform') {
+      return (
+        <div className="sub-navbar">
+          <div className="navbar-content">
+            <div className="navbar-links">
+              <button 
+                className={`nav-link ${currentSubPage === 'overview' ? 'active' : ''}`}
+                onClick={() => handleSubNavigation('overview')}
+              >
+                <FileText size={16} />
+                Overview & Slides
+              </button>
+              <button 
+                className={`nav-link ${currentSubPage === 'architecture' ? 'active' : ''}`}
+                onClick={() => handleSubNavigation('architecture')}
+              >
+                <BarChart3 size={16} />
+                Data Architecture
+              </button>
+              <button 
+                className={`nav-link ${currentSubPage === 'demo' ? 'active' : ''}`}
+                onClick={() => handleSubNavigation('demo')}
+              >
+                <Monitor size={16} />
+                Live Demo
+              </button>
+            </div>
+          </div>
+        </div>
+      );
     }
+    return null;
+  };
+
+  const renderPageContent = () => {
+    if (currentPage === 'data-mesh') {
+      return <DataMeshModule />;
+    }
+    
+    if (currentPage === 'data-platform') {
+      switch (currentSubPage) {
+        case 'overview':
+          return <OverviewPage />;
+        case 'architecture':
+          return <ArchitecturePage />;
+        case 'demo':
+          return <DashboardDemo />;
+        default:
+          return <OverviewPage />;
+      }
+    }
+    
+    return <DataMeshModule />; // Default fallback
   };
 
   return (
     <div className="app-container">
       {renderNavBar()}
+      {renderSubNavBar()}
       <main className="main-content">
         {renderPageContent()}
       </main>
