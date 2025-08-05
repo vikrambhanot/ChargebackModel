@@ -1,11 +1,23 @@
-import { Activity, ArrowRight, Bell, Building2, ChevronDown, Cloud, Database, DollarSign, Download, Filter, Layers, Search, Target, TrendingUp, UserCheck, Users } from 'lucide-react';
+import {
+    Activity,
+    Bell,
+    Building2,
+    ChevronDown,
+    Cloud,
+    Database,
+    DollarSign,
+    Download, Filter,
+    Layers,
+    Search,
+    Target,
+    TrendingUp,
+    UserCheck,
+    Users
+} from 'lucide-react';
 import { useState } from 'react';
 import { Bar, BarChart, CartesianGrid, Cell, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import './App.css';
 
-const Dashboard = () => {
-  const [currentView, setCurrentView] = useState('landing');
-  const [viewType, setViewType] = useState('cio'); // Track which view we're in
+const DashboardView = ({ viewType, handleBackToLanding }) => {
   const [selectedCIO, setSelectedCIO] = useState('Sarah Chen - Technology');
   const [selectedPlatform, setSelectedPlatform] = useState('All Platforms');
   const [selectedTimeframe, setSelectedTimeframe] = useState('Q3 2025');
@@ -45,19 +57,19 @@ const Dashboard = () => {
   ];
 
   const monthlyTrends = [
-    { month: 'Jan', total: 45000, production: 28000, workspace: 17000, subscription: 12000 },
-    { month: 'Feb', total: 52000, production: 32000, workspace: 20000, subscription: 14000 },
-    { month: 'Mar', total: 48000, production: 30000, workspace: 18000, subscription: 13000 },
-    { month: 'Apr', total: 58000, production: 36000, workspace: 22000, subscription: 16000 },
-    { month: 'May', total: 61000, production: 38000, workspace: 23000, subscription: 17000 },
-    { month: 'Jun', total: 67000, production: 42000, workspace: 25000, subscription: 18500 }
+    { month: 'Jan', total: 45000, production: 28000, workspace: 17000 },
+    { month: 'Feb', total: 52000, production: 32000, workspace: 20000 },
+    { month: 'Mar', total: 48000, production: 30000, workspace: 18000 },
+    { month: 'Apr', total: 58000, production: 36000, workspace: 22000 },
+    { month: 'May', total: 61000, production: 38000, workspace: 23000 },
+    { month: 'Jun', total: 67000, production: 42000, workspace: 25000 }
   ];
 
   const orgBreakdown = [
-    { name: 'Trading Systems', value: 28000, production: 18000, workspace: 10000, color: '#3b82f6' },
-    { name: 'Risk Analytics', value: 18500, production: 12000, workspace: 6500, color: '#8b5cf6' },
-    { name: 'Customer Data', value: 12000, production: 8500, workspace: 3500, color: '#06b6d4' },
-    { name: 'Regulatory Reporting', value: 8500, production: 6000, workspace: 2500, color: '#10b981' }
+    { name: 'Trading Systems', value: 28000, color: '#3b82f6' },
+    { name: 'Risk Analytics', value: 18500, color: '#8b5cf6' },
+    { name: 'Customer Data', value: 12000, color: '#06b6d4' },
+    { name: 'Regulatory Reporting', value: 8500, color: '#10b981' }
   ];
 
   const personaBreakdown = [
@@ -68,14 +80,6 @@ const Dashboard = () => {
     { name: 'ML Engineers', value: 4500, users: 10, avgCost: 450, color: '#f59e0b' }
   ];
 
-  const topUsers = [
-    { name: 'Analytics Team Lead', org: 'Trading Systems', persona: 'Data Scientist', cost: 4200, usage: '850 hrs', type: 'Production + Workspace' },
-    { name: 'Risk Modeler', org: 'Risk Analytics', persona: 'Data Scientist', cost: 3800, usage: '720 hrs', type: 'Workspace' },
-    { name: 'Senior Analyst', org: 'Customer Data', persona: 'Data Analyst', cost: 3200, usage: '640 hrs', type: 'Production' },
-    { name: 'Compliance Lead', org: 'Regulatory Reporting', persona: 'Business Analyst', cost: 2900, usage: '580 hrs', type: 'Production' }
-  ];
-
-  // Different data sets for each view type
   const platformData = {
     trends: [
       { month: 'Jan', snowflake: 28000, aws: 15000, azure: 8000, databricks: 4000 },
@@ -86,10 +90,10 @@ const Dashboard = () => {
       { month: 'Jun', snowflake: 42000, aws: 22000, azure: 11000, databricks: 6000 }
     ],
     breakdown: [
-      { name: 'Snowflake', value: 42000, users: 180, avgCost: 233, color: '#3b82f6' },
-      { name: 'AWS Services', value: 22000, users: 95, avgCost: 232, color: '#f59e0b' },
-      { name: 'Azure Analytics', value: 11000, users: 45, avgCost: 244, color: '#06b6d4' },
-      { name: 'Databricks', value: 6000, users: 25, avgCost: 240, color: '#8b5cf6' }
+      { name: 'Snowflake', value: 42000, color: '#3b82f6' },
+      { name: 'AWS Services', value: 22000, color: '#f59e0b' },
+      { name: 'Azure Analytics', value: 11000, color: '#06b6d4' },
+      { name: 'Databricks', value: 6000, color: '#8b5cf6' }
     ]
   };
 
@@ -103,348 +107,23 @@ const Dashboard = () => {
       { month: 'Jun', production: 42000, userWorkspace: 25000, subscriptions: 18500 }
     ],
     breakdown: [
-      { name: 'Shared Production', value: 42000, type: 'Usage-based', efficiency: '95%', color: '#10b981' },
-      { name: 'Team Workspaces', value: 15000, type: 'Subscription', efficiency: '78%', color: '#3b82f6' },
-      { name: 'Personal Sandboxes', value: 10000, type: 'Subscription', efficiency: '65%', color: '#8b5cf6' }
+      { name: 'Shared Production', value: 42000, color: '#10b981' },
+      { name: 'Team Workspaces', value: 15000, color: '#3b82f6' },
+      { name: 'Personal Sandboxes', value: 10000, color: '#8b5cf6' }
     ]
   };
 
-  // Navigation handler
-  const handleNavigation = (optionId) => {
-    setViewType(optionId);
-    setCurrentView('dashboard');
-  };
-
-  // Navigation options for landing page
-  const navigationOptions = [
-    {
-      id: 'cio',
-      title: 'By CIO Organization',
-      description: 'View costs by organizational hierarchy and leadership groups',
-      icon: Building2,
-      color: '#3b82f6',
-      stats: { total: '$67K', orgs: '4 CIO Groups', growth: '+12%' }
-    },
-    {
-      id: 'platform',
-      title: 'By Platform',
-      description: 'Analyze costs across Snowflake, AWS, Azure, and other data platforms',
-      icon: Layers,
-      color: '#8b5cf6',
-      stats: { total: '$67K', platforms: '4 Platforms', leader: 'Snowflake' }
-    },
-    {
-      id: 'persona',
-      title: 'By User Persona',
-      description: 'Break down costs by Data Scientists, Analysts, Engineers, and other roles',
-      icon: UserCheck,
-      color: '#22c55e',
-      stats: { total: '$67K', personas: '5 Personas', topUser: 'Data Scientists' }
-    },
-    {
-      id: 'workspace',
-      title: 'By Workspace Type',
-      description: 'Compare production services vs user workspace costs and usage patterns',
-      icon: Target,
-      color: '#f97316',
-      stats: { production: '$42K', workspace: '$25K', model: 'Usage + Subscription' }
-    }
+  const topUsers = [
+    { name: 'Analytics Team Lead', org: 'Trading Systems', persona: 'Data Scientist', cost: 4200, usage: '850 hrs', type: 'Production + Workspace' },
+    { name: 'Risk Modeler', org: 'Risk Analytics', persona: 'Data Scientist', cost: 3800, usage: '720 hrs', type: 'Workspace' },
+    { name: 'Senior Analyst', org: 'Customer Data', persona: 'Data Analyst', cost: 3200, usage: '640 hrs', type: 'Production' },
+    { name: 'Compliance Lead', org: 'Regulatory Reporting', persona: 'Business Analyst', cost: 2900, usage: '580 hrs', type: 'Production' }
   ];
 
-  if (currentView === 'landing') {
-    return (
-      <div className="landing-container">
-        {/* Header */}
-        <div className="header">
-          <div className="header-content">
-            <div className="header-left">
-              <div className="logo-section">
-                <div className="logo-icon">
-                  <Database size={32} color="white" />
-                </div>
-                <div className="logo-text">
-                  <h1>Enterprise Chargeback</h1>
-                  <p>Data Platform Cost Analytics & Allocation</p>
-                </div>
-              </div>
-            </div>
-            <div className="header-right">
-              <div className="total-cost">
-                <p className="cost-label">Total Monthly Costs</p>
-                <p className="cost-amount">$67,000</p>
-              </div>
-              <div className="user-avatar">
-                <span>SC</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Hero Section */}
-        <div className="hero-section">
-          <div className="hero-content">
-            <h2>How would you like to explore your data costs?</h2>
-            <p>Choose your preferred view to dive deep into cost analytics, usage patterns, and chargeback insights across your data platforms.</p>
-          </div>
-
-          {/* Navigation Cards */}
-          <div className="navigation-grid">
-            {navigationOptions.map((option) => {
-              const IconComponent = option.icon;
-              return (
-                <div
-                  key={option.id}
-                  onClick={() => handleNavigation(option.id)}
-                  className="nav-card"
-                  style={{ backgroundColor: option.color }}
-                >
-                  <div className="card-header">
-                    <div className="card-icon">
-                      <IconComponent size={32} color="white" />
-                    </div>
-                    <ArrowRight size={24} color="white" className="arrow-icon" />
-                  </div>
-                  
-                  <h3>{option.title}</h3>
-                  <p className="card-description">{option.description}</p>
-                  
-                  <div className="card-stats">
-                    {Object.entries(option.stats).map(([key, value], index) => (
-                      <div key={index} className="stat-item">
-                        <p className="stat-value">{value}</p>
-                        <p className="stat-label">{key.replace(/([A-Z])/g, ' $1')}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Quick Stats Preview */}
-          <div className="quick-stats">
-            <h3>At a Glance</h3>
-            <div className="stats-grid">
-              <div className="stat-card">
-                <div className="stat-icon blue">
-                  <DollarSign size={32} />
-                </div>
-                <p className="stat-number">$67K</p>
-                <p className="stat-text">Total Monthly</p>
-              </div>
-              
-              <div className="stat-card">
-                <div className="stat-icon green">
-                  <Users size={32} />
-                </div>
-                <p className="stat-number">247</p>
-                <p className="stat-text">Active Users</p>
-              </div>
-              
-              <div className="stat-card">
-                <div className="stat-icon purple">
-                  <Activity size={32} />
-                </div>
-                <p className="stat-number">$271</p>
-                <p className="stat-text">Avg per User</p>
-              </div>
-              
-              <div className="stat-card">
-                <div className="stat-icon orange">
-                  <TrendingUp size={32} />
-                </div>
-                <p className="stat-number">+12%</p>
-                <p className="stat-text">vs Last Month</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Dashboard view
-  return (
-    <div className="dashboard-container">
-      {/* Header */}
-      <div className="dashboard-header">
-        <div className="dashboard-header-content">
-          <div className="header-left">
-            <button 
-              onClick={() => {
-                setCurrentView('landing');
-                setViewType('cio');
-              }}
-              className="back-button"
-            >
-              ← Back to Navigation
-            </button>
-            <div className="logo-section">
-              <Database size={32} color="#3b82f6" />
-              <h1>Enterprise Chargeback</h1>
-            </div>
-          </div>
-          <div className="header-actions">
-            <button className="icon-button">
-              <Bell size={20} />
-            </button>
-            <button className="icon-button">
-              <Search size={20} />
-            </button>
-            <div className="user-avatar">
-              <span>SC</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Controls - Dynamic based on view type */}
-      <div className="controls-section">
-        <div className="controls-grid">
-          {/* Show different controls based on view type */}
-          {viewType === 'cio' && (
-            <>
-              <div className="control-group">
-                <label>CIO Organization</label>
-                <div className="select-wrapper">
-                  <select value={selectedCIO} onChange={(e) => setSelectedCIO(e.target.value)}>
-                    {cioGroups.map(cio => (
-                      <option key={cio} value={cio}>{cio}</option>
-                    ))}
-                  </select>
-                  <ChevronDown size={20} className="select-icon" />
-                </div>
-              </div>
-              <div className="control-group">
-                <label>Org Level</label>
-                <div className="select-wrapper">
-                  <select>
-                    <option>All Levels</option>
-                    <option>Division Level</option>
-                    <option>Department Level</option>
-                    <option>Team Level</option>
-                  </select>
-                  <ChevronDown size={20} className="select-icon" />
-                </div>
-              </div>
-            </>
-          )}
-
-          {viewType === 'platform' && (
-            <>
-              <div className="control-group">
-                <label>Platform</label>
-                <div className="select-wrapper">
-                  <select value={selectedPlatform} onChange={(e) => setSelectedPlatform(e.target.value)}>
-                    {platforms.map(platform => (
-                      <option key={platform} value={platform}>{platform}</option>
-                    ))}
-                  </select>
-                  <ChevronDown size={20} className="select-icon" />
-                </div>
-              </div>
-              <div className="control-group">
-                <label>Service Type</label>
-                <div className="select-wrapper">
-                  <select>
-                    <option>All Services</option>
-                    <option>Compute</option>
-                    <option>Storage</option>
-                    <option>Analytics</option>
-                  </select>
-                  <ChevronDown size={20} className="select-icon" />
-                </div>
-              </div>
-            </>
-          )}
-
-          {viewType === 'persona' && (
-            <>
-              <div className="control-group">
-                <label>User Persona</label>
-                <div className="select-wrapper">
-                  <select value={selectedPersona} onChange={(e) => setSelectedPersona(e.target.value)}>
-                    {personas.map(persona => (
-                      <option key={persona} value={persona}>{persona}</option>
-                    ))}
-                  </select>
-                  <ChevronDown size={20} className="select-icon" />
-                </div>
-              </div>
-              <div className="control-group">
-                <label>Experience Level</label>
-                <div className="select-wrapper">
-                  <select>
-                    <option>All Levels</option>
-                    <option>Junior (0-2 years)</option>
-                    <option>Mid (3-5 years)</option>
-                    <option>Senior (6+ years)</option>
-                  </select>
-                  <ChevronDown size={20} className="select-icon" />
-                </div>
-              </div>
-            </>
-          )}
-
-          {viewType === 'workspace' && (
-            <>
-              <div className="control-group">
-                <label>Workspace Type</label>
-                <div className="select-wrapper">
-                  <select value={selectedWorkspace} onChange={(e) => setSelectedWorkspace(e.target.value)}>
-                    {workspaceTypes.map(type => (
-                      <option key={type} value={type}>{type}</option>
-                    ))}
-                  </select>
-                  <ChevronDown size={20} className="select-icon" />
-                </div>
-              </div>
-              <div className="control-group">
-                <label>Billing Model</label>
-                <div className="select-wrapper">
-                  <select>
-                    <option>All Models</option>
-                    <option>Usage-based</option>
-                    <option>Subscription</option>
-                    <option>Hybrid</option>
-                  </select>
-                  <ChevronDown size={20} className="select-icon" />
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* Common controls */}
-          <div className="control-group">
-            <label>Timeframe</label>
-            <div className="select-wrapper">
-              <select value={selectedTimeframe} onChange={(e) => setSelectedTimeframe(e.target.value)}>
-                <option value="Q3 2025">Q3 2025</option>
-                <option value="Q2 2025">Q2 2025</option>
-                <option value="Q1 2025">Q1 2025</option>
-                <option value="YTD 2025">YTD 2025</option>
-              </select>
-              <ChevronDown size={20} className="select-icon" />
-            </div>
-          </div>
-
-          <div className="control-group">
-            <label>View</label>
-            <div className="select-wrapper">
-              <select>
-                <option>Summary</option>
-                <option>Detailed</option>
-                <option>Trend Analysis</option>
-              </select>
-              <ChevronDown size={20} className="select-icon" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Key Metrics - Dynamic based on view type */}
-      <div className="metrics-grid">
-        {viewType === 'cio' && (
+  const renderMetrics = () => {
+    switch (viewType) {
+      case 'cio':
+        return (
           <>
             <div className="metric-card">
               <div className="metric-content">
@@ -495,9 +174,9 @@ const Dashboard = () => {
               </div>
             </div>
           </>
-        )}
-
-        {viewType === 'platform' && (
+        );
+      case 'platform':
+        return (
           <>
             <div className="metric-card">
               <div className="metric-content">
@@ -548,9 +227,9 @@ const Dashboard = () => {
               </div>
             </div>
           </>
-        )}
-
-        {viewType === 'persona' && (
+        );
+      case 'persona':
+        return (
           <>
             <div className="metric-card">
               <div className="metric-content">
@@ -601,9 +280,9 @@ const Dashboard = () => {
               </div>
             </div>
           </>
-        )}
-
-        {viewType === 'workspace' && (
+        );
+      case 'workspace':
+        return (
           <>
             <div className="metric-card">
               <div className="metric-content">
@@ -654,12 +333,16 @@ const Dashboard = () => {
               </div>
             </div>
           </>
-        )}
-      </div>
+        );
+      default:
+        return null;
+    }
+  };
 
-      {/* Charts Section - Dynamic based on view type */}
-      <div className="charts-grid">
-        {viewType === 'cio' && (
+  const renderCharts = () => {
+    switch (viewType) {
+      case 'cio':
+        return (
           <>
             <div className="chart-card">
               <div className="chart-header">
@@ -673,7 +356,7 @@ const Dashboard = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />
-                  <Tooltip formatter={(value) => [`${value.toLocaleString()}`, 'Cost']} />
+                  <Tooltip formatter={(value) => [`$${value.toLocaleString()}`, 'Cost']} />
                   <Line type="monotone" dataKey="total" stroke="#3b82f6" strokeWidth={3} name="Total Org Cost" />
                 </LineChart>
               </ResponsiveContainer>
@@ -695,20 +378,20 @@ const Dashboard = () => {
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="value"
-                    label={({name, value}) => `${name}: ${value.toLocaleString()}`}
+                    label={({name, value}) => `${name}: $${value.toLocaleString()}`}
                   >
                     {orgBreakdown.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value) => [`${value.toLocaleString()}`, 'Cost']} />
+                  <Tooltip formatter={(value) => [`$${value.toLocaleString()}`, 'Cost']} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
           </>
-        )}
-
-        {viewType === 'platform' && (
+        );
+      case 'platform':
+        return (
           <>
             <div className="chart-card">
               <div className="chart-header">
@@ -722,7 +405,7 @@ const Dashboard = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />
-                  <Tooltip formatter={(value) => [`${value.toLocaleString()}`, 'Cost']} />
+                  <Tooltip formatter={(value) => [`$${value.toLocaleString()}`, 'Cost']} />
                   <Line type="monotone" dataKey="snowflake" stroke="#3b82f6" strokeWidth={2} name="Snowflake" />
                   <Line type="monotone" dataKey="aws" stroke="#f59e0b" strokeWidth={2} name="AWS" />
                   <Line type="monotone" dataKey="azure" stroke="#06b6d4" strokeWidth={2} name="Azure" />
@@ -747,20 +430,20 @@ const Dashboard = () => {
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="value"
-                    label={({name, value}) => `${name}: ${value.toLocaleString()}`}
+                    label={({name, value}) => `${name}: $${value.toLocaleString()}`}
                   >
                     {platformData.breakdown.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value) => [`${value.toLocaleString()}`, 'Cost']} />
+                  <Tooltip formatter={(value) => [`$${value.toLocaleString()}`, 'Cost']} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
           </>
-        )}
-
-        {viewType === 'persona' && (
+        );
+      case 'persona':
+        return (
           <>
             <div className="chart-card">
               <div className="chart-header">
@@ -774,7 +457,7 @@ const Dashboard = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />
-                  <Tooltip formatter={(value) => [`${value.toLocaleString()}`, 'Cost']} />
+                  <Tooltip formatter={(value) => [`$${value.toLocaleString()}`, 'Cost']} />
                   <Bar dataKey="total" fill="#3b82f6" name="Total Usage" />
                 </BarChart>
               </ResponsiveContainer>
@@ -796,20 +479,20 @@ const Dashboard = () => {
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="value"
-                    label={({name, value}) => `${name}: ${value.toLocaleString()}`}
+                    label={({name, value}) => `${name}: $${value.toLocaleString()}`}
                   >
                     {personaBreakdown.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value) => [`${value.toLocaleString()}`, 'Cost']} />
+                  <Tooltip formatter={(value) => [`$${value.toLocaleString()}`, 'Cost']} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
           </>
-        )}
-
-        {viewType === 'workspace' && (
+        );
+      case 'workspace':
+        return (
           <>
             <div className="chart-card">
               <div className="chart-header">
@@ -823,7 +506,7 @@ const Dashboard = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />
-                  <Tooltip formatter={(value) => [`${value.toLocaleString()}`, 'Cost']} />
+                  <Tooltip formatter={(value) => [`$${value.toLocaleString()}`, 'Cost']} />
                   <Line type="monotone" dataKey="production" stroke="#10b981" strokeWidth={3} name="Production" />
                   <Line type="monotone" dataKey="userWorkspace" stroke="#3b82f6" strokeWidth={3} name="User Workspaces" />
                   <Line type="monotone" dataKey="subscriptions" stroke="#8b5cf6" strokeWidth={2} strokeDasharray="5 5" name="Subscriptions" />
@@ -847,31 +530,234 @@ const Dashboard = () => {
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="value"
-                    label={({name, value}) => `${name}: ${value.toLocaleString()}`}
+                    label={({name, value}) => `${name}: $${value.toLocaleString()}`}
                   >
                     {workspaceData.breakdown.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value) => [`${value.toLocaleString()}`, 'Cost']} />
+                  <Tooltip formatter={(value) => [`$${value.toLocaleString()}`, 'Cost']} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
           </>
-        )}
+        );
+      default:
+        return null;
+    }
+  };
+
+  const renderControls = () => {
+    switch (viewType) {
+      case 'cio':
+        return (
+          <>
+            <div className="control-group">
+              <label>CIO Organization</label>
+              <div className="select-wrapper">
+                <select value={selectedCIO} onChange={(e) => setSelectedCIO(e.target.value)}>
+                  {cioGroups.map(cio => (
+                    <option key={cio} value={cio}>{cio}</option>
+                  ))}
+                </select>
+                <ChevronDown size={20} className="select-icon" />
+              </div>
+            </div>
+            <div className="control-group">
+              <label>Org Level</label>
+              <div className="select-wrapper">
+                <select>
+                  <option>All Levels</option>
+                  <option>Division Level</option>
+                  <option>Department Level</option>
+                  <option>Team Level</option>
+                </select>
+                <ChevronDown size={20} className="select-icon" />
+              </div>
+            </div>
+          </>
+        );
+      case 'platform':
+        return (
+          <>
+            <div className="control-group">
+              <label>Platform</label>
+              <div className="select-wrapper">
+                <select value={selectedPlatform} onChange={(e) => setSelectedPlatform(e.target.value)}>
+                  {platforms.map(platform => (
+                    <option key={platform} value={platform}>{platform}</option>
+                  ))}
+                </select>
+                <ChevronDown size={20} className="select-icon" />
+              </div>
+            </div>
+            <div className="control-group">
+              <label>Service Type</label>
+              <div className="select-wrapper">
+                <select>
+                  <option>All Services</option>
+                  <option>Compute</option>
+                  <option>Storage</option>
+                  <option>Analytics</option>
+                </select>
+                <ChevronDown size={20} className="select-icon" />
+              </div>
+            </div>
+          </>
+        );
+      case 'persona':
+        return (
+          <>
+            <div className="control-group">
+              <label>User Persona</label>
+              <div className="select-wrapper">
+                <select value={selectedPersona} onChange={(e) => setSelectedPersona(e.target.value)}>
+                  {personas.map(persona => (
+                    <option key={persona} value={persona}>{persona}</option>
+                  ))}
+                </select>
+                <ChevronDown size={20} className="select-icon" />
+              </div>
+            </div>
+            <div className="control-group">
+              <label>Experience Level</label>
+              <div className="select-wrapper">
+                <select>
+                  <option>All Levels</option>
+                  <option>Junior (0-2 years)</option>
+                  <option>Mid (3-5 years)</option>
+                  <option>Senior (6+ years)</option>
+                </select>
+                <ChevronDown size={20} className="select-icon" />
+              </div>
+            </div>
+          </>
+        );
+      case 'workspace':
+        return (
+          <>
+            <div className="control-group">
+              <label>Workspace Type</label>
+              <div className="select-wrapper">
+                <select value={selectedWorkspace} onChange={(e) => setSelectedWorkspace(e.target.value)}>
+                  {workspaceTypes.map(type => (
+                    <option key={type} value={type}>{type}</option>
+                  ))}
+                </select>
+                <ChevronDown size={20} className="select-icon" />
+              </div>
+            </div>
+            <div className="control-group">
+              <label>Billing Model</label>
+              <div className="select-wrapper">
+                <select>
+                  <option>All Models</option>
+                  <option>Usage-based</option>
+                  <option>Subscription</option>
+                  <option>Hybrid</option>
+                </select>
+                <ChevronDown size={20} className="select-icon" />
+              </div>
+            </div>
+          </>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const getTableTitle = () => {
+    switch (viewType) {
+      case 'cio':
+        return 'Top Cost Contributors by Organization';
+      case 'platform':
+        return 'Top Platform Users';
+      case 'persona':
+        return 'Top Users by Persona';
+      case 'workspace':
+        return 'Top Workspace Users';
+      default:
+        return 'Top Cost Contributors';
+    }
+  };
+
+  return (
+    <div className="dashboard-container">
+      {/* Dashboard Header */}
+      <div className="dashboard-header">
+        <div className="dashboard-header-content">
+          <div className="header-left">
+            <button onClick={handleBackToLanding} className="back-button">
+              ← Back to Navigation
+            </button>
+            <div className="logo-section">
+              <Database size={32} color="#3b82f6" />
+              <h1>Enterprise Chargeback</h1>
+            </div>
+          </div>
+          <div className="header-actions">
+            <button className="icon-button">
+              <Bell size={20} />
+            </button>
+            <button className="icon-button">
+              <Search size={20} />
+            </button>
+            <div className="user-avatar">
+              <span>SC</span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Top Users Table - Dynamic title based on view */}
+      {/* Controls */}
+      <div className="controls-section">
+        <div className="controls-grid">
+          {renderControls()}
+          
+          {/* Common controls */}
+          <div className="control-group">
+            <label>Timeframe</label>
+            <div className="select-wrapper">
+              <select value={selectedTimeframe} onChange={(e) => setSelectedTimeframe(e.target.value)}>
+                <option value="Q3 2025">Q3 2025</option>
+                <option value="Q2 2025">Q2 2025</option>
+                <option value="Q1 2025">Q1 2025</option>
+                <option value="YTD 2025">YTD 2025</option>
+              </select>
+              <ChevronDown size={20} className="select-icon" />
+            </div>
+          </div>
+
+          <div className="control-group">
+            <label>View</label>
+            <div className="select-wrapper">
+              <select>
+                <option>Summary</option>
+                <option>Detailed</option>
+                <option>Trend Analysis</option>
+              </select>
+              <ChevronDown size={20} className="select-icon" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Key Metrics */}
+      <div className="metrics-grid">
+        {renderMetrics()}
+      </div>
+
+      {/* Charts */}
+      <div className="charts-grid">
+        {renderCharts()}
+      </div>
+
+      {/* Top Users Table */}
       <div className="table-card">
         <div className="table-header">
-          <h3>
-            {viewType === 'cio' && 'Top Cost Contributors by Organization'}
-            {viewType === 'platform' && 'Top Platform Users'}
-            {viewType === 'persona' && 'Top Users by Persona'}
-            {viewType === 'workspace' && 'Top Workspace Users'}
-          </h3>
+          <h3>{getTableTitle()}</h3>
           <button className="primary-button">
-            View All {viewType === 'cio' ? 'Users' : viewType === 'platform' ? 'Platform Users' : viewType === 'persona' ? 'Personas' : 'Workspaces'}
+            View All Users
           </button>
         </div>
         <div className="table-container">
@@ -918,4 +804,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default DashboardView;
