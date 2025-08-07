@@ -1,6 +1,7 @@
-import { BarChart3, Database, FileText, Monitor, Network } from 'lucide-react';
+import { BarChart3, Bot, Database, FileText, Monitor, Network } from 'lucide-react';
 import { useState } from 'react';
 import './App.css';
+import AICostCalculator from './components/AICostCalculator';
 import ArchitecturePage from './components/ArchitecturePage';
 import DashboardDemo from './components/DashboardDemo';
 import DataMeshModule from './components/DataMeshModule';
@@ -47,6 +48,13 @@ const App = () => {
           >
             <Database size={18} />
             Data Platform Management
+          </button>
+          <button 
+            className={`nav-link ${currentPage === 'ai-calculator' ? 'active' : ''}`}
+            onClick={() => handleMainNavigation('ai-calculator')}
+          >
+            <Bot size={18} />
+            AI Cost Calculator
           </button>
         </div>
       </div>
@@ -104,6 +112,10 @@ const App = () => {
         default:
           return <OverviewPage />;
       }
+    }
+
+    if (currentPage === 'ai-calculator') {
+      return <AICostCalculator />;
     }
     
     return <DataMeshModule />; // Default fallback
