@@ -1,4 +1,4 @@
-import { BarChart3, Bot, Database, FileText, Monitor, Network } from 'lucide-react';
+import { BarChart3, Bot, Database, FileText, Layers, Monitor, Network } from 'lucide-react';
 import { useState } from 'react';
 import './App.css';
 import AICostCalculator from './components/AICostCalculator';
@@ -6,6 +6,7 @@ import ArchitecturePage from './components/ArchitecturePage';
 import DashboardDemo from './components/DashboardDemo';
 import DataMeshModule from './components/DataMeshModule';
 import OverviewPage from './components/OverviewPage';
+import RDLArchitectureExplorer from './components/RDLArchitectureExplorer';
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState('data-mesh');
@@ -48,6 +49,13 @@ const App = () => {
           >
             <Database size={18} />
             Data Platform Management
+          </button>
+          <button 
+            className={`nav-link ${currentPage === 'rdl-architecture' ? 'active' : ''}`}
+            onClick={() => handleMainNavigation('rdl-architecture')}
+          >
+            <Layers size={18} />
+            RDL Architecture
           </button>
           <button 
             className={`nav-link ${currentPage === 'ai-calculator' ? 'active' : ''}`}
@@ -112,6 +120,10 @@ const App = () => {
         default:
           return <OverviewPage />;
       }
+    }
+
+    if (currentPage === 'rdl-architecture') {
+      return <RDLArchitectureExplorer />;
     }
 
     if (currentPage === 'ai-calculator') {
