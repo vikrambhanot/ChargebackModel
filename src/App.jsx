@@ -5,6 +5,7 @@ import AICostCalculator from './components/AICostCalculator';
 import ArchitecturePage from './components/ArchitecturePage';
 import DashboardDemo from './components/DashboardDemo';
 import DataMeshModule from './components/DataMeshModule';
+import MigrationApproachDiagram from './components/MigrationApproachDiagram';
 import OverviewPage from './components/OverviewPage';
 import RDLArchitectureExplorer from './components/RDLArchitectureExplorer';
 
@@ -63,6 +64,14 @@ const App = () => {
           >
             <Bot size={18} />
             AI Cost Calculator
+          </button>
+
+           <button 
+            className={`nav-link ${currentPage === 'ibm-modernization' ? 'active' : ''}`}
+            onClick={() => handleMainNavigation('ibm-modernization')}
+          >
+            <Bot size={18} />
+            IBM Modernization
           </button>
         </div>
       </div>
@@ -128,6 +137,10 @@ const App = () => {
 
     if (currentPage === 'ai-calculator') {
       return <AICostCalculator />;
+    }
+
+    if (currentPage === 'ibm-modernization') {
+      return <MigrationApproachDiagram />;
     }
     
     return <DataMeshModule />; // Default fallback
