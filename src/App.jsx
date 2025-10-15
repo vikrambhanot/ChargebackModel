@@ -1,9 +1,10 @@
-import { BarChart3, FileText, Monitor } from 'lucide-react';
+import { BarChart3, FileText, Monitor, Building2 } from 'lucide-react';
 import { useState } from 'react';
 import './App.css';
 import ArchitecturePage from './components/ArchitecturePage';
 import DashboardDemo from './components/DashboardDemo';
 import OverviewPage from './components/OverviewPage';
+import OperatingModelPage from './components/OperatingModelPage';
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState('overview');
@@ -12,29 +13,36 @@ const App = () => {
     <nav className="main-navbar">
       <div className="navbar-content">
         <div className="navbar-brand">
-          <img 
-            src="/capgemini-logo.png" 
-            alt="Capgemini" 
+          <img
+            src="/capgemini-logo.png"
+            alt="Capgemini"
             style={{ width: '200px', height: '50px' }}
           />
           <span>Enterprise Chargeback</span>
         </div>
         <div className="navbar-links">
-          <button 
+          <button
             className={`nav-link ${currentPage === 'overview' ? 'active' : ''}`}
             onClick={() => setCurrentPage('overview')}
           >
             <FileText size={18} />
             Overview & Slides
           </button>
-          <button 
+          <button
+            className={`nav-link ${currentPage === 'operating-model' ? 'active' : ''}`}
+            onClick={() => setCurrentPage('operating-model')}
+          >
+            <Building2 size={18} />
+            Operating Model
+          </button>
+          <button
             className={`nav-link ${currentPage === 'architecture' ? 'active' : ''}`}
             onClick={() => setCurrentPage('architecture')}
           >
             <BarChart3 size={18} />
             Data Architecture
           </button>
-          <button 
+          <button
             className={`nav-link ${currentPage === 'demo' ? 'active' : ''}`}
             onClick={() => setCurrentPage('demo')}
           >
@@ -50,6 +58,8 @@ const App = () => {
     switch (currentPage) {
       case 'overview':
         return <OverviewPage />;
+      case 'operating-model':
+        return <OperatingModelPage />;
       case 'architecture':
         return <ArchitecturePage />;
       case 'demo':
