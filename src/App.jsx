@@ -1,10 +1,11 @@
-import { BarChart3, Bot, Database, FileText, Layers, Monitor, Network } from 'lucide-react';
+import { BarChart3, Bot, Database, FileText, Layers, Monitor, Network, Upload } from 'lucide-react';
 import { useState } from 'react';
 import './App.css';
 import AICostCalculator from './components/AICostCalculator';
 import ArchitecturePage from './components/ArchitecturePage';
 import DashboardDemo from './components/DashboardDemo';
 import DataMeshModule from './components/DataMeshModule';
+import DocumentManagement from './components/DocumentManagement';
 import MigrationApproachDiagram from './components/MigrationApproachDiagram';
 import OverviewPage from './components/OverviewPage';
 import RDLArchitectureExplorer from './components/RDLArchitectureExplorer';
@@ -65,13 +66,19 @@ const App = () => {
             <Bot size={18} />
             AI Cost Calculator
           </button>
-
-           <button 
+          <button 
             className={`nav-link ${currentPage === 'ibm-modernization' ? 'active' : ''}`}
             onClick={() => handleMainNavigation('ibm-modernization')}
           >
             <Bot size={18} />
             IBM Modernization
+          </button>
+          <button 
+            className={`nav-link ${currentPage === 'document-management' ? 'active' : ''}`}
+            onClick={() => handleMainNavigation('document-management')}
+          >
+            <Upload size={18} />
+            Compliance Demo
           </button>
         </div>
       </div>
@@ -141,6 +148,10 @@ const App = () => {
 
     if (currentPage === 'ibm-modernization') {
       return <MigrationApproachDiagram />;
+    }
+
+    if (currentPage === 'document-management') {
+      return <DocumentManagement />;
     }
     
     return <DataMeshModule />; // Default fallback
