@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { ArrowLeft, FileText, Sparkles, CheckCircle, Clock, Shield, AlertCircle } from "lucide-react";
 import { supabase } from "../lib/supabaseClient";
 import FINRAComplianceRules from "./analysis/FINRAComplianceRules";
+import { API_ENDPOINTS } from "../config/api";
 
 const ANALYSIS_STEPS = [
   { id: "preview", label: "Document Preview", icon: FileText },
@@ -68,7 +69,7 @@ export default function DocumentAnalysis({ doc, onBack }) {
     try {
       setStatus("Sending document to Claude AI for analysis...");
       
-      const response = await fetch('http://localhost:8080/api/compliance/analyze', {
+      const response = await fetch(API_ENDPOINTS.COMPLIANCE_ANALYZE, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -129,7 +130,7 @@ export default function DocumentAnalysis({ doc, onBack }) {
       
       // User-friendly error messages
       if (error.message.includes('fetch') || error.message.includes('Failed to fetch')) {
-        alert('⚠️ Cannot connect to analysis service. Please ensure the backend is running on http://localhost:8080');
+        alert('⚠️ Cannot connect to analysis service. Please ensure the backend is running ');
       } else {
         alert('Analysis failed: ' + error.message);
       }
