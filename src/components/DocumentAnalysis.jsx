@@ -1,11 +1,13 @@
 import { useEffect, useState, useCallback } from "react";
-import { ArrowLeft, FileText, Sparkles, CheckCircle, Clock, Shield, AlertCircle } from "lucide-react";
+import { ArrowLeft, FileText, Sparkles, CheckCircle,  Shield,  Layers } from "lucide-react";
 import { supabase } from "../lib/supabaseClient";
 import FINRAComplianceRules from "./analysis/FINRAComplianceRules";
+import EnhancedAnalysisResults from "./analysis/EnhancedAnalysisResults";
 import { API_ENDPOINTS } from "../config/api";
 
 const ANALYSIS_STEPS = [
   { id: "preview", label: "Document Preview", icon: FileText },
+  { id: "mode-selection", label: "Analysis Mode", icon: Layers },
   { id: "rules-selection", label: "Select Rules", icon: Shield },
   { id: "analysis", label: "AI Analysis", icon: Sparkles },
   { id: "results", label: "Results", icon: CheckCircle },
@@ -18,32 +20,67 @@ export default function DocumentAnalysis({ doc, onBack }) {
   const [documentContent, setDocumentContent] = useState(null);
   const [selectedRules, setSelectedRules] = useState([]);
   const [analysisResults, setAnalysisResults] = useState(null);
+  const [analysisMode, setAnalysisMode] = useState(null); // "simple" or "enhanced"
+  const [enhancedResults, setEnhancedResults] = useState(null);
 
   // Load document content with useCallback
   const loadDocumentContent = useCallback(async () => {
-    try {
-      setStatus("Loading document...");
-      
-      const { data } = supabase.storage
-        .from('demo-uploads')
-        .getPublicUrl(doc.file_url);
-      
-      if (data?.publicUrl) {
-        if (doc.mime_type?.includes('text')) {
-          const response = await fetch(data.publicUrl);
-          const text = await response.text();
-          setDocumentContent(text);
-        } else {
-          setDocumentContent("Preview not available for this file type");
+  try {
+    setStatus("Loading document...");
+    
+    const { data } = supabase.storage
+      .from('demo-uploads')
+      .getPublicUrl(doc.file_url);
+    
+    if (data?.publicUrl) {
+      // Check if it's a PDF or use backend for extraction
+      if (doc.mime_type?.includes('pdf') || doc.filename?.toLowerCase().endsWith('.pdf')) {
+        setStatus("Extracting text from PDF...");
+        
+        try {
+          const response = await fetch(API_ENDPOINTS.COMPLIANCE_READ_DOCUMENT, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              documentUrl: data.publicUrl,
+              mimeType: doc.mime_type
+            })
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.error || 'Failed to extract PDF text');
+          }
+
+          const result = await response.json();
+          setDocumentContent(result.content);
+          setStatus(`PDF loaded - ${result.length} characters extracted`);
+        } catch (pdfError) {
+          console.error("PDF extraction error:", pdfError);
+          setStatus("Error extracting PDF: " + pdfError.message);
+          setDocumentContent(null);
         }
+        
+      } else if (doc.mime_type?.includes('text')) {
+        // Text files - fetch directly
+        const response = await fetch(data.publicUrl);
+        const text = await response.text();
+        setDocumentContent(text);
+        setStatus("Document loaded");
+      } else {
+        setDocumentContent("Preview not available for this file type");
+        setStatus("Unsupported file type");
       }
-      
-      setStatus("Document loaded");
-    } catch (error) {
-      console.error("Error loading document:", error);
-      setStatus("Error loading document");
     }
-  }, [doc.file_url, doc.mime_type]);
+    
+  } catch (error) {
+    console.error("Error loading document:", error);
+    setStatus("Error loading document: " + error.message);
+    setDocumentContent(null);
+  }
+}, [doc.file_url, doc.mime_type, doc.filename]);
 
   useEffect(() => {
     if (doc) {
@@ -52,6 +89,12 @@ export default function DocumentAnalysis({ doc, onBack }) {
   }, [doc, loadDocumentContent]);
 
   const handleStartReview = () => {
+    setCurrentStep("mode-selection");
+    setStatus("Choose analysis mode");
+  };
+
+  const handleModeSelected = (mode) => {
+    setAnalysisMode(mode);
     setCurrentStep("rules-selection");
     setStatus("Select compliance rules to check");
   };
@@ -59,9 +102,15 @@ export default function DocumentAnalysis({ doc, onBack }) {
   const handleRulesSelected = (rules) => {
     setSelectedRules(rules);
     setCurrentStep("analysis");
-    handleAnalyze(rules);
+    
+    if (analysisMode === "enhanced") {
+      handleEnhancedAnalyze(rules);
+    } else {
+      handleAnalyze(rules);
+    }
   };
 
+  // Simple Analysis
   const handleAnalyze = async (rules) => {
     setIsProcessing(true);
     setStatus("Connecting to analysis service...");
@@ -101,11 +150,9 @@ export default function DocumentAnalysis({ doc, onBack }) {
 
       const results = await response.json();
       
-      // Check if it's an error response from backend
       if (results.overallStatus === 'ERROR') {
         setStatus('Error: ' + results.summary);
         
-        // Show user-friendly error message
         if (results.summary.includes('API key')) {
           alert('⚠️ Claude API configuration error. Please contact support.');
         } else if (results.summary.includes('rate limit')) {
@@ -128,12 +175,70 @@ export default function DocumentAnalysis({ doc, onBack }) {
       setStatus("Error during analysis");
       setIsProcessing(false);
       
-      // User-friendly error messages
       if (error.message.includes('fetch') || error.message.includes('Failed to fetch')) {
-        alert('⚠️ Cannot connect to analysis service. Please ensure the backend is running ');
+        alert('⚠️ Cannot connect to analysis service. Please check your connection.');
       } else {
         alert('Analysis failed: ' + error.message);
       }
+    }
+  };
+
+  // Enhanced Analysis
+  const handleEnhancedAnalyze = async (rules) => {
+    setIsProcessing(true);
+    setStatus("Classifying document sections...");
+
+    try {
+      const response = await fetch(API_ENDPOINTS.COMPLIANCE_ANALYZE_ENHANCED, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          documentContent,
+          autoClassify: true,
+          rules: rules.map(r => ({
+            id: r.id,
+            name: r.name,
+            guidelines: r.guidelines,
+            category: r.category,
+            severity: r.severity
+          }))
+        })
+      });
+
+      setStatus("Analyzing each section...");
+
+      if (!response.ok) {
+        let errorMessage = 'Enhanced analysis failed';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.summary || errorMessage;
+        } catch (e) {
+          errorMessage = `Server error: ${response.status} ${response.statusText}`;
+        }
+        throw new Error(errorMessage);
+      }
+
+      const results = await response.json();
+      
+      if (results.overallStatus === 'ERROR') {
+        setStatus('Error: ' + results.summary);
+        alert('Analysis error: ' + results.summary);
+        setIsProcessing(false);
+        return;
+      }
+      
+      setEnhancedResults(results);
+      setCurrentStep("results");
+      setStatus(`Analysis complete - ${results.totalSections} sections analyzed`);
+      setIsProcessing(false);
+      
+    } catch (error) {
+      console.error("Enhanced analysis error:", error);
+      setStatus("Error during analysis");
+      setIsProcessing(false);
+      alert('Enhanced analysis failed: ' + error.message);
     }
   };
 
@@ -141,12 +246,14 @@ export default function DocumentAnalysis({ doc, onBack }) {
     switch (stepId) {
       case "preview":
         return true;
-      case "rules-selection":
+      case "mode-selection":
         return !!documentContent;
+      case "rules-selection":
+        return !!analysisMode;
       case "analysis":
         return selectedRules.length > 0;
       case "results":
-        return !!analysisResults;
+        return !!(analysisResults || enhancedResults);
       default:
         return false;
     }
@@ -155,75 +262,202 @@ export default function DocumentAnalysis({ doc, onBack }) {
   const renderStepContent = () => {
     switch (currentStep) {
       case "preview":
-        return (
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Document Preview</h2>
-            
-            <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span className="font-semibold text-gray-700">Filename:</span>
-                  <p className="text-gray-600">{doc.filename}</p>
-                </div>
-                <div>
-                  <span className="font-semibold text-gray-700">Type:</span>
-                  <p className="text-gray-600">{doc.mime_type || 'Unknown'}</p>
-                </div>
-                <div>
-                  <span className="font-semibold text-gray-700">Size:</span>
-                  <p className="text-gray-600">{(doc.file_size_bytes / 1024).toFixed(2)} KB</p>
-                </div>
-                <div>
-                  <span className="font-semibold text-gray-700">Uploaded:</span>
-                  <p className="text-gray-600">{new Date(doc.created_at).toLocaleDateString()}</p>
-                </div>
-              </div>
-            </div>
-
-            {documentContent && (
-              <div className="mb-6">
-                <h3 className="font-semibold text-gray-700 mb-2">Content Preview:</h3>
-                <div className="bg-gray-50 p-4 rounded border border-gray-200 max-h-96 overflow-y-auto">
-                  <pre className="whitespace-pre-wrap text-sm text-gray-700">{documentContent}</pre>
-                </div>
-              </div>
-            )}
-
-            <button
-              onClick={handleStartReview}
-              disabled={!documentContent}
-              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg flex items-center justify-center disabled:opacity-50"
-            >
-              <Shield className="mr-2" size={20} />
-              Start FINRA Compliance Review
-            </button>
-          </div>
-        );
-
+        return renderPreview();
+      
+      case "mode-selection":
+        return renderModeSelection();
+      
       case "rules-selection":
         return (
           <FINRAComplianceRules
             onProceed={handleRulesSelected}
-            onBack={() => setCurrentStep("preview")}
+            onBack={() => setCurrentStep("mode-selection")}
           />
         );
 
       case "analysis":
-        return (
-          <div className="bg-white rounded-lg shadow-lg p-6 text-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Analyzing for FINRA Compliance</h2>
-            <p className="text-gray-600">Claude AI is reviewing your document against {selectedRules.length} compliance rules...</p>
-            <p className="text-sm text-gray-500 mt-4">{status}</p>
-          </div>
-        );
+        return renderAnalysisProgress();
 
       case "results":
-        return renderResults();
+        if (analysisMode === "enhanced") {
+          return (
+            <EnhancedAnalysisResults
+              results={enhancedResults}
+              selectedRules={selectedRules}
+              onBack={handleResetAnalysis}
+            />
+          );
+        } else {
+          return renderResults();
+        }
 
       default:
         return null;
     }
+  };
+
+  const handleResetAnalysis = () => {
+    setCurrentStep("preview");
+    setAnalysisResults(null);
+    setEnhancedResults(null);
+    setSelectedRules([]);
+    setAnalysisMode(null);
+    setStatus("Ready for new analysis");
+  };
+
+  const renderPreview = () => {
+    return (
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">Document Preview</h2>
+        
+        <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <span className="font-semibold text-gray-700">Filename:</span>
+              <p className="text-gray-600">{doc.filename}</p>
+            </div>
+            <div>
+              <span className="font-semibold text-gray-700">Type:</span>
+              <p className="text-gray-600">{doc.mime_type || 'Unknown'}</p>
+            </div>
+            <div>
+              <span className="font-semibold text-gray-700">Size:</span>
+              <p className="text-gray-600">{(doc.file_size_bytes / 1024).toFixed(2)} KB</p>
+            </div>
+            <div>
+              <span className="font-semibold text-gray-700">Uploaded:</span>
+              <p className="text-gray-600">{new Date(doc.created_at).toLocaleDateString()}</p>
+            </div>
+          </div>
+        </div>
+
+        {documentContent && (
+          <div className="mb-6">
+            <h3 className="font-semibold text-gray-700 mb-2">Content Preview:</h3>
+            <div className="bg-gray-50 p-4 rounded border border-gray-200 max-h-96 overflow-y-auto">
+              <pre className="whitespace-pre-wrap text-sm text-gray-700">{documentContent}</pre>
+            </div>
+          </div>
+        )}
+
+        <button
+          onClick={handleStartReview}
+          disabled={!documentContent}
+          className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg flex items-center justify-center disabled:opacity-50"
+        >
+          <Shield className="mr-2" size={20} />
+          Start FINRA Compliance Review
+        </button>
+      </div>
+    );
+  };
+
+  const renderModeSelection = () => {
+    return (
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">Choose Analysis Mode</h2>
+        <p className="text-gray-600 mb-6">
+          Select how you want to analyze this document
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Simple Mode */}
+          <button
+            onClick={() => handleModeSelected("simple")}
+            className="group relative bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 hover:border-blue-400 rounded-xl p-6 text-left transition-all hover:shadow-lg"
+          >
+            <div className="absolute top-4 right-4">
+              <FileText className="text-blue-400 group-hover:text-blue-600" size={32} />
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Simple Analysis</h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Analyze the entire document as a single piece of content
+            </p>
+            <ul className="text-sm text-gray-700 space-y-2">
+              <li className="flex items-start">
+                <CheckCircle className="text-green-500 mr-2 flex-shrink-0 mt-0.5" size={16} />
+                <span>Quick and straightforward</span>
+              </li>
+              <li className="flex items-start">
+                <CheckCircle className="text-green-500 mr-2 flex-shrink-0 mt-0.5" size={16} />
+                <span>Best for single-purpose documents</span>
+              </li>
+              <li className="flex items-start">
+                <CheckCircle className="text-green-500 mr-2 flex-shrink-0 mt-0.5" size={16} />
+                <span>Unified compliance report</span>
+              </li>
+            </ul>
+            <div className="mt-4 text-blue-600 font-semibold group-hover:text-blue-700">
+              Select Simple Mode →
+            </div>
+          </button>
+
+          {/* Enhanced Mode */}
+          <button
+            onClick={() => handleModeSelected("enhanced")}
+            className="group relative bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 hover:border-purple-400 rounded-xl p-6 text-left transition-all hover:shadow-lg"
+          >
+            <div className="absolute top-4 right-4">
+              <Layers className="text-purple-400 group-hover:text-purple-600" size={32} />
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">
+              Enhanced Analysis
+              <span className="ml-2 text-xs bg-purple-200 text-purple-800 px-2 py-1 rounded-full">Recommended</span>
+            </h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Automatically classify sections and apply targeted rules
+            </p>
+            <ul className="text-sm text-gray-700 space-y-2">
+              <li className="flex items-start">
+                <Sparkles className="text-purple-500 mr-2 flex-shrink-0 mt-0.5" size={16} />
+                <span>AI-powered section classification</span>
+              </li>
+              <li className="flex items-start">
+                <Sparkles className="text-purple-500 mr-2 flex-shrink-0 mt-0.5" size={16} />
+                <span>Targeted rule application per section</span>
+              </li>
+              <li className="flex items-start">
+                <Sparkles className="text-purple-500 mr-2 flex-shrink-0 mt-0.5" size={16} />
+                <span>Detailed section-by-section reports</span>
+              </li>
+              <li className="flex items-start">
+                <Sparkles className="text-purple-500 mr-2 flex-shrink-0 mt-0.5" size={16} />
+                <span>Best for complex multi-section documents</span>
+              </li>
+            </ul>
+            <div className="mt-4 text-purple-600 font-semibold group-hover:text-purple-700">
+              Select Enhanced Mode →
+            </div>
+          </button>
+        </div>
+
+        <button
+          onClick={() => setCurrentStep("preview")}
+          className="mt-6 text-gray-600 hover:text-gray-800 text-sm flex items-center"
+        >
+          <ArrowLeft size={16} className="mr-1" />
+          Back to Preview
+        </button>
+      </div>
+    );
+  };
+
+  const renderAnalysisProgress = () => {
+    return (
+      <div className="bg-white rounded-lg shadow-lg p-6 text-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          {analysisMode === "enhanced" ? "Enhanced Analysis in Progress" : "Analyzing for FINRA Compliance"}
+        </h2>
+        <p className="text-gray-600">
+          {analysisMode === "enhanced" 
+            ? "Classifying sections and applying targeted compliance rules..."
+            : `Claude AI is reviewing your document against ${selectedRules.length} compliance rules...`
+          }
+        </p>
+        <p className="text-sm text-gray-500 mt-4">{status}</p>
+      </div>
+    );
   };
 
   const renderResults = () => {
@@ -421,12 +655,7 @@ export default function DocumentAnalysis({ doc, onBack }) {
 
         <div className="mt-6 flex gap-4">
           <button
-            onClick={() => {
-              setCurrentStep("preview");
-              setAnalysisResults(null);
-              setSelectedRules([]);
-              setStatus("Ready for new analysis");
-            }}
+            onClick={handleResetAnalysis}
             className="flex-1 bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-all"
           >
             Analyze Another Document
