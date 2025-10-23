@@ -20,29 +20,61 @@ export default function DocumentAnalysis({ doc, onBack }) {
 
   // Load document content with useCallback
   const loadDocumentContent = useCallback(async () => {
-    try {
-      setStatus("Loading document...");
-      
-      const { data } = supabase.storage
-        .from('demo-uploads')
-        .getPublicUrl(doc.file_url);
-      
-      if (data?.publicUrl) {
-        if (doc.mime_type?.includes('text')) {
+  try {
+    setStatus("Loading document...");
+    
+    const { data } = supabase.storage
+      .from('demo-uploads')
+      .getPublicUrl(doc.file_url);
+    
+    if (data?.publicUrl) {
+      // For PDF, DOCX, and text files, fetch and extract text
+      if (doc.mime_type?.includes('pdf') || 
+          doc.mime_type?.includes('word') || 
+          doc.mime_type?.includes('document') ||
+          doc.mime_type?.includes('text')) {
+        
+        try {
+          // Fetch the file as blob
           const response = await fetch(data.publicUrl);
-          const text = await response.text();
-          setDocumentContent(text);
-        } else {
-          setDocumentContent("Preview not available for this file type");
+          const blob = await response.blob();
+          
+          // Create FormData and send to backend
+          const formData = new FormData();
+          formData.append('file', blob, doc.filename);
+          
+          const readResponse = await fetch('http://localhost:8080/api/compliance/read-document', {
+            method: 'POST',
+            body: formData
+          });
+          
+          if (readResponse.ok) {
+            const result = await readResponse.json();
+            setDocumentContent(result.content);
+          } else {
+            // Fallback for text files
+            if (doc.mime_type?.includes('text')) {
+              const text = await response.text();
+              setDocumentContent(text);
+            } else {
+              setDocumentContent("Unable to extract text from this document type");
+            }
+          }
+        } catch (error) {
+          console.error("Error extracting document text:", error);
+          setDocumentContent("Error loading document content");
         }
+      } else {
+        setDocumentContent("Preview not available for this file type");
       }
-      
-      setStatus("Document loaded");
-    } catch (error) {
-      console.error("Error loading document:", error);
-      setStatus("Error loading document");
     }
-  }, [doc.file_url, doc.mime_type]);
+    
+    setStatus("Document loaded");
+  } catch (error) {
+    console.error("Error loading document:", error);
+    setStatus("Error loading document");
+  }
+}, [doc.file_url, doc.mime_type, doc.filename]);
 
   useEffect(() => {
     if (doc) {
