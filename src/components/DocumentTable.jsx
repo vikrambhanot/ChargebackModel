@@ -154,7 +154,7 @@ export default function DocumentTable({ onAnalyze, refreshTrigger }) {
                       className="text-green-600 hover:text-green-800 hover:bg-green-50 p-2 rounded transition-colors"
                       title="Analyze"
                     >
-                      <Eye size={18} />
+                      Analyze
                     </button>
                     <button
                       onClick={() => handleDelete(doc)}
