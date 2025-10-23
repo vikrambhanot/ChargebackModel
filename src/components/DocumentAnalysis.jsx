@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { ArrowLeft, FileText, Sparkles, CheckCircle, Clock, Shield, AlertCircle } from "lucide-react";
 import { supabase } from "../lib/supabaseClient";
 import FINRAComplianceRules from "./analysis/FINRAComplianceRules";
-import { API_ENDPOINTS } from "../../config/api";
+import { API_ENDPOINTS } from "../config/api";
 
 const ANALYSIS_STEPS = [
   { id: "preview", label: "Document Preview", icon: FileText },
