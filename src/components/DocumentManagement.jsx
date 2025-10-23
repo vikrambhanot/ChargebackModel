@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Upload, FileText, Database, Sparkles } from 'lucide-react';
+import { Database, Sparkles } from 'lucide-react';
 import DocumentTable from './DocumentTable';
 import FileUploader from './FileUploader';
 import DocumentAnalysis from './DocumentAnalysis';
@@ -12,65 +12,58 @@ export default function DocumentManagement() {
     return (
       <DocumentAnalysis 
         doc={selectedDoc}
-        onBack={() => setSelectedDoc(null)}
+        onBack={() => {
+          setSelectedDoc(null);
+          setRefresh(prev => prev + 1);
+        }}
       />
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
-      <div className="max-w-6xl mx-auto">
-        {/* Header Section */}
-        <div className="mb-8 text-center">
-          <div className="flex items-center justify-center mb-4">
-            <div className="bg-blue-600 p-3 rounded-full mr-4">
-              <Database className="text-white" size={32} />
-            </div>
-            <h1 className="text-4xl font-bold text-gray-900">
-              Document Management System
-            </h1>
-          </div>
-          <p className="text-lg text-gray-600 flex items-center justify-center">
-            <Sparkles className="mr-2 text-purple-600" size={20} />
-            Upload, manage, and analyze your documents with AI-powered insights
-          </p>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="bg-white rounded-lg shadow-md p-4 border-l-4 border-blue-500">
-            <div className="flex items-center">
-              <Upload className="text-blue-500 mr-3" size={24} />
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header Section with gradient card */}
+        <div className="mb-8">
+          <div className="bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-2xl shadow-2xl p-8 text-white">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Uploads</p>
-                <p className="text-2xl font-bold text-gray-900">-</p>
+                <div className="flex items-center mb-3">
+                  <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl mr-4">
+                    <Database size={32} />
+                  </div>
+                  <div>
+                    <h1 className="text-4xl font-bold">
+                      FINRA Compliance Analysis
+                    </h1>
+                    <p className="text-purple-100 mt-1 flex items-center">
+                      <Sparkles className="mr-2" size={18} />
+                      AI-Powered Document Compliance Verification
+                    </p>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-          <div className="bg-white rounded-lg shadow-md p-4 border-l-4 border-green-500">
-            <div className="flex items-center">
-              <FileText className="text-green-500 mr-3" size={24} />
-              <div>
-                <p className="text-sm text-gray-600">Documents</p>
-                <p className="text-2xl font-bold text-gray-900">-</p>
-              </div>
-            </div>
-          </div>
-          <div className="bg-white rounded-lg shadow-md p-4 border-l-4 border-purple-500">
-            <div className="flex items-center">
-              <Sparkles className="text-purple-500 mr-3" size={24} />
-              <div>
-                <p className="text-sm text-gray-600">AI Analysis</p>
-                <p className="text-2xl font-bold text-gray-900">Ready</p>
+              <div className="hidden md:block">
+                <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
+                  <p className="text-sm text-purple-100 mb-1">Status</p>
+                  <div className="flex items-center">
+                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse mr-2"></div>
+                    <span className="text-lg font-semibold">System Ready</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
         
-        <FileUploader 
-          onUploadComplete={() => setRefresh(prev => prev + 1)} 
-        />
+        {/* Upload Section */}
+        <div className="mb-8">
+          <FileUploader 
+            onUploadComplete={() => setRefresh(prev => prev + 1)} 
+          />
+        </div>
         
+        {/* Document Table */}
         <DocumentTable 
           refreshTrigger={refresh}
           onAnalyze={(doc) => setSelectedDoc(doc)}

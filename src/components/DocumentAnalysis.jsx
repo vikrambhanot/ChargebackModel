@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { ArrowLeft, FileText, Sparkles, CheckCircle, Clock, Shield } from "lucide-react";
+import { ArrowLeft, FileText, Sparkles, CheckCircle, Clock, Shield, AlertCircle } from "lucide-react";
 import { supabase } from "../lib/supabaseClient";
 import FINRAComplianceRules from "./analysis/FINRAComplianceRules";
 
@@ -20,61 +20,29 @@ export default function DocumentAnalysis({ doc, onBack }) {
 
   // Load document content with useCallback
   const loadDocumentContent = useCallback(async () => {
-  try {
-    setStatus("Loading document...");
-    
-    const { data } = supabase.storage
-      .from('demo-uploads')
-      .getPublicUrl(doc.file_url);
-    
-    if (data?.publicUrl) {
-      // For PDF, DOCX, and text files, fetch and extract text
-      if (doc.mime_type?.includes('pdf') || 
-          doc.mime_type?.includes('word') || 
-          doc.mime_type?.includes('document') ||
-          doc.mime_type?.includes('text')) {
-        
-        try {
-          // Fetch the file as blob
+    try {
+      setStatus("Loading document...");
+      
+      const { data } = supabase.storage
+        .from('demo-uploads')
+        .getPublicUrl(doc.file_url);
+      
+      if (data?.publicUrl) {
+        if (doc.mime_type?.includes('text')) {
           const response = await fetch(data.publicUrl);
-          const blob = await response.blob();
-          
-          // Create FormData and send to backend
-          const formData = new FormData();
-          formData.append('file', blob, doc.filename);
-          
-          const readResponse = await fetch('http://localhost:8080/api/compliance/read-document', {
-            method: 'POST',
-            body: formData
-          });
-          
-          if (readResponse.ok) {
-            const result = await readResponse.json();
-            setDocumentContent(result.content);
-          } else {
-            // Fallback for text files
-            if (doc.mime_type?.includes('text')) {
-              const text = await response.text();
-              setDocumentContent(text);
-            } else {
-              setDocumentContent("Unable to extract text from this document type");
-            }
-          }
-        } catch (error) {
-          console.error("Error extracting document text:", error);
-          setDocumentContent("Error loading document content");
+          const text = await response.text();
+          setDocumentContent(text);
+        } else {
+          setDocumentContent("Preview not available for this file type");
         }
-      } else {
-        setDocumentContent("Preview not available for this file type");
       }
+      
+      setStatus("Document loaded");
+    } catch (error) {
+      console.error("Error loading document:", error);
+      setStatus("Error loading document");
     }
-    
-    setStatus("Document loaded");
-  } catch (error) {
-    console.error("Error loading document:", error);
-    setStatus("Error loading document");
-  }
-}, [doc.file_url, doc.mime_type, doc.filename]);
+  }, [doc.file_url, doc.mime_type]);
 
   useEffect(() => {
     if (doc) {
@@ -317,6 +285,59 @@ export default function DocumentAnalysis({ doc, onBack }) {
             <div className="text-3xl font-bold text-gray-900">{analysisResults.complianceScore}%</div>
             <div className={`text-sm font-semibold ${statusClasses.badge}`}>
               {analysisResults.overallStatus.replace('_', ' ')}
+            </div>
+          </div>
+        </div>
+
+        {/* How to Interpret Results Section */}
+        <div className="mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-5">
+          <div className="flex items-start">
+            <div className="bg-blue-100 rounded-full p-2 mr-4">
+              <Sparkles className="text-blue-600" size={20} />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-bold text-gray-900 mb-3 flex items-center">
+                📊 How to Interpret Your Score
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                <div className="bg-white rounded-lg p-3 border border-green-200">
+                  <div className="flex items-center mb-2">
+                    <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                    <span className="font-semibold text-green-800">90-100%</span>
+                  </div>
+                  <p className="text-gray-700 text-xs">
+                    <strong>Excellent</strong> - Document is compliant or has only minor issues
+                  </p>
+                </div>
+                <div className="bg-white rounded-lg p-3 border border-yellow-200">
+                  <div className="flex items-center mb-2">
+                    <div className="w-3 h-3 bg-yellow-500 rounded-full mr-2"></div>
+                    <span className="font-semibold text-yellow-800">70-89%</span>
+                  </div>
+                  <p className="text-gray-700 text-xs">
+                    <strong>Needs Review</strong> - Some violations require attention
+                  </p>
+                </div>
+                <div className="bg-white rounded-lg p-3 border border-red-200">
+                  <div className="flex items-center mb-2">
+                    <div className="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
+                    <span className="font-semibold text-red-800">Below 70%</span>
+                  </div>
+                  <p className="text-gray-700 text-xs">
+                    <strong>Critical Issues</strong> - Immediate action required
+                  </p>
+                </div>
+              </div>
+              <div className="mt-4 pt-4 border-t border-blue-200">
+                <p className="text-xs text-gray-600">
+                  <strong>Scoring:</strong> Each violation deducts points based on severity:
+                  <span className="ml-2 text-red-600 font-semibold">Critical (-25 pts)</span>
+                  <span className="mx-2">•</span>
+                  <span className="text-yellow-600 font-semibold">Warning (-10 pts)</span>
+                  <span className="mx-2">•</span>
+                  <span className="text-blue-600 font-semibold">Info (-5 pts)</span>
+                </p>
+              </div>
             </div>
           </div>
         </div>
