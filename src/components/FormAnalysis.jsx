@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { ArrowLeft, CheckCircle, XCircle, AlertCircle, Loader, Download, FileText, Eye } from "lucide-react";
 import { supabase } from "../lib/supabaseClient";
+import { API_ENDPOINTS } from "../config/api";
 
 export default function FormAnalysis({ form, onBack }) {
   const [analyzing, setAnalyzing] = useState(false);
@@ -39,7 +40,7 @@ export default function FormAnalysis({ form, onBack }) {
       }
 
       // Call your backend
-      const response = await fetch("http://localhost:8080/api/compliance/verify-form", {
+      const response = await fetch(API_ENDPOINTS.FORM_ANALYSIS, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
