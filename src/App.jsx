@@ -1,4 +1,4 @@
-import { BarChart3, Bot, Database, FileText, Layers, Monitor, Network, Upload } from 'lucide-react';
+import { BarChart3, ClipboardCheck,Bot, Database, FileText, Layers, Monitor, Network, Upload, Shield } from 'lucide-react';
 import { useState } from 'react';
 import './App.css';
 import AICostCalculator from './components/AICostCalculator';
@@ -6,9 +6,9 @@ import ArchitecturePage from './components/ArchitecturePage';
 import DashboardDemo from './components/DashboardDemo';
 import DataMeshModule from './components/DataMeshModule';
 import DocumentManagement from './components/DocumentManagement';
-import MigrationApproachDiagram from './components/MigrationApproachDiagram';
 import OverviewPage from './components/OverviewPage';
 import RDLArchitectureExplorer from './components/RDLArchitectureExplorer';
+import FormVerification from './components/FormVerification';
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState('data-mesh');
@@ -67,12 +67,12 @@ const App = () => {
             AI Cost Calculator
           </button>
           <button 
-            className={`nav-link ${currentPage === 'ibm-modernization' ? 'active' : ''}`}
-            onClick={() => handleMainNavigation('ibm-modernization')}
-          >
-            <Bot size={18} />
-            IBM Modernization
-          </button>
+  className={`nav-link ${currentPage === 'form-verification' ? 'active' : ''}`}
+  onClick={() => handleMainNavigation('form-verification')}
+>
+  <ClipboardCheck size={18} />
+  FINRA Forms
+</button>
           <button 
             className={`nav-link ${currentPage === 'document-management' ? 'active' : ''}`}
             onClick={() => handleMainNavigation('document-management')}
@@ -146,9 +146,9 @@ const App = () => {
       return <AICostCalculator />;
     }
 
-    if (currentPage === 'ibm-modernization') {
-      return <MigrationApproachDiagram />;
-    }
+   if (currentPage === 'form-verification') {
+  return <FormVerification />;
+}
 
     if (currentPage === 'document-management') {
       return <DocumentManagement />;

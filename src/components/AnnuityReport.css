@@ -1,0 +1,428 @@
+.annuity-report-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  background: #f9fafb;
+  min-height: 100vh;
+}
+
+.report-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.report-header h1 {
+  font-size: 2rem;
+  color: #1f2937;
+  margin-bottom: 8px;
+}
+
+.product-name {
+  font-size: 1.125rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* Suitability Score */
+.suitability-score {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-left: 6px solid;
+}
+
+.score-green {
+  border-left-color: #10b981;
+}
+
+.score-yellow {
+  border-left-color: #f59e0b;
+}
+
+.score-red {
+  border-left-color: #ef4444;
+}
+
+.score-icon {
+  flex-shrink: 0;
+}
+
+.score-green .score-icon {
+  color: #10b981;
+}
+
+.score-yellow .score-icon {
+  color: #f59e0b;
+}
+
+.score-red .score-icon {
+  color: #ef4444;
+}
+
+.score-details {
+  flex: 1;
+}
+
+.score-value {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.score-green .score-value {
+  color: #10b981;
+}
+
+.score-yellow .score-value {
+  color: #f59e0b;
+}
+
+.score-red .score-value {
+  color: #ef4444;
+}
+
+.score-label {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 12px;
+}
+
+.score-description {
+  color: #6b7280;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Report Sections */
+.report-section {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.report-section h2 {
+  font-size: 1.5rem;
+  color: #1f2937;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 10px;
+}
+
+/* Profile Grid */
+.profile-grid,
+.objectives-grid,
+.understanding-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.profile-item,
+.objective-item,
+.understanding-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.profile-item strong,
+.objective-item strong,
+.understanding-item strong {
+  font-size: 0.875rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.profile-item span,
+.objective-item span,
+.understanding-item span {
+  font-size: 1rem;
+  color: #1f2937;
+  font-weight: 500;
+}
+
+/* FINRA Section */
+.finra-section {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border: 2px solid #3b82f6;
+}
+
+.finra-intro {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+  border-left: 4px solid #3b82f6;
+}
+
+.finra-intro p {
+  margin: 0;
+  color: #374151;
+  line-height: 1.6;
+}
+
+.finra-intro strong {
+  color: #1f2937;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.finra-rule-section {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid #e5e7eb;
+}
+
+.finra-rule-section:last-child {
+  margin-bottom: 0;
+}
+
+.rule-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.rule-header h4 {
+  margin: 0;
+  font-size: 1.125rem;
+  color: #1f2937;
+}
+
+.rule-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.status-compliant {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status-review {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-concern {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.rule-description {
+  color: #6b7280;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.rule-analysis h5 {
+  font-size: 0.875rem;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+
+.rule-analysis ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.rule-analysis li {
+  color: #4b5563;
+  line-height: 1.8;
+  margin-bottom: 6px;
+}
+
+/* Risk Factors */
+.risk-factors {
+  background: #fffbeb;
+  border-left: 6px solid #f59e0b;
+}
+
+.risk-factors ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.risk-factors li {
+  color: #92400e;
+  line-height: 1.8;
+  margin-bottom: 10px;
+}
+
+/* Recommendation */
+.recommendation {
+  border-left: 6px solid;
+}
+
+.recommendation-green {
+  border-left-color: #10b981;
+  background: #f0fdf4;
+}
+
+.recommendation-yellow {
+  border-left-color: #f59e0b;
+  background: #fffbeb;
+}
+
+.recommendation-red {
+  border-left-color: #ef4444;
+  background: #fef2f2;
+}
+
+.recommendation-content {
+  color: #374151;
+}
+
+.recommendation-text {
+  font-size: 1.125rem;
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+
+.next-steps h3 {
+  font-size: 1rem;
+  color: #1f2937;
+  margin-bottom: 12px;
+}
+
+.next-steps ol {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.next-steps li {
+  line-height: 1.8;
+  margin-bottom: 8px;
+  color: #4b5563;
+}
+
+.disclaimer {
+  margin-top: 20px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+  border: 1px dashed #9ca3af;
+}
+
+.disclaimer p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+.disclaimer strong {
+  color: #374151;
+}
+
+/* Actions */
+.report-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+  background: white;
+  color: #374151;
+  border: 2px solid #e5e7eb;
+}
+
+.btn-secondary:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .suitability-score {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .profile-grid,
+  .objectives-grid,
+  .understanding-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rule-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .report-actions {
+    flex-direction: column;
+  }
+
+  .action-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .report-actions {
+    display: none;
+  }
+
+  .annuity-report-container {
+    background: white;
+    padding: 20px;
+  }
+
+  .report-section {
+    page-break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #e5e7eb;
+  }
+}
