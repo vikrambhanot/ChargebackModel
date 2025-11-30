@@ -2,7 +2,7 @@ import { Trash2, ShieldCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
 
-export default function FormTable({ onVerify, refreshTrigger }) {
+export default function FormTable({ onVerify, refreshTrigger, selectedSignatureCount = 0 }) {
   const [forms, setForms] = useState([]);
   const [selectedIds, setSelectedIds] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -164,14 +164,23 @@ export default function FormTable({ onVerify, refreshTrigger }) {
                     </td>
                     <td className="p-3">
                       <div className="flex items-center justify-center space-x-2">
-                        <button
-                          onClick={() => onVerify && onVerify(form)}
-                          className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors flex items-center text-sm font-medium"
-                          title="Verify Form"
-                        >
-                          <ShieldCheck className="w-4 h-4 mr-1" />
-                          Verify
-                        </button>
+                      
+
+<button
+  onClick={() => onVerify && onVerify(form)}
+  className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors flex items-center text-sm font-medium"
+  title={selectedSignatureCount > 0 
+    ? `Verify with ${selectedSignatureCount} signature(s)` 
+    : "Verify Form"}
+>
+  <ShieldCheck className="w-4 h-4 mr-1" />
+  Verify
+  {selectedSignatureCount > 0 && (
+    <span className="ml-1 bg-white/20 px-1.5 py-0.5 rounded text-xs">
+      +{selectedSignatureCount}
+    </span>
+  )}
+</button>
                         <button
                           onClick={() => handleDelete(form)}
                           className="text-red-600 hover:text-red-800 hover:bg-red-50 p-2 rounded-lg transition-colors"

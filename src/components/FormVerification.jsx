@@ -1,17 +1,21 @@
 import { useState } from "react";
-import { ClipboardCheck, Sparkles, Shield } from 'lucide-react';
+import { ClipboardCheck, Sparkles, Shield, UserCheck } from 'lucide-react';
 import FormTable from './FormTable';
 import FormUploader from './FormUploader';
 import FormAnalysis from './FormAnalysis';
+import SignaturePanel from './SignaturePanel';
 
 export default function FormVerification() {
   const [refresh, setRefresh] = useState(0);
   const [selectedForm, setSelectedForm] = useState(null);
+  const [selectedSignatures, setSelectedSignatures] = useState([]);
 
+  // ✅ FIXED: Pass both form AND selectedSignatures
   if (selectedForm) {
     return (
       <FormAnalysis 
         form={selectedForm}
+        selectedSignatures={selectedSignatures}
         onBack={() => {
           setSelectedForm(null);
           setRefresh(prev => prev + 1);
@@ -44,7 +48,7 @@ export default function FormVerification() {
                 </div>
                 <div className="mt-4 bg-white/10 backdrop-blur-md rounded-lg p-4 border border-white/20">
                   <p className="text-sm mb-2">This demo verifies:</p>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
                     <div className="flex items-center">
                       <Sparkles className="mr-2" size={16} />
                       <span className="text-sm">Signature Presence</span>
@@ -60,6 +64,10 @@ export default function FormVerification() {
                     <div className="flex items-center">
                       <Sparkles className="mr-2" size={16} />
                       <span className="text-sm">Checkbox Validation</span>
+                    </div>
+                    <div className="flex items-center">
+                      <UserCheck className="mr-2" size={16} />
+                      <span className="text-sm font-semibold">Signature Match</span>
                     </div>
                   </div>
                 </div>
@@ -77,18 +85,31 @@ export default function FormVerification() {
           </div>
         </div>
         
-        {/* Upload Section */}
-        <div className="mb-8">
-          <FormUploader 
-            onUploadComplete={() => setRefresh(prev => prev + 1)} 
-          />
+        {/* Main Content - Side by Side */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Left: Signature Panel */}
+          <div className="lg:col-span-1">
+            <SignaturePanel 
+              selectedSignatures={selectedSignatures}
+              onSelectionChange={setSelectedSignatures}
+            />
+          </div>
+
+          {/* Right: Upload & Forms Table */}
+          <div className="lg:col-span-3 space-y-6">
+            {/* Upload Section */}
+            <FormUploader 
+              onUploadComplete={() => setRefresh(prev => prev + 1)} 
+            />
+            
+            {/* Forms Table */}
+            <FormTable 
+              refreshTrigger={refresh}
+              onVerify={(form) => setSelectedForm(form)}
+              selectedSignatureCount={selectedSignatures.length}
+            />
+          </div>
         </div>
-        
-        {/* Forms Table */}
-        <FormTable 
-          refreshTrigger={refresh}
-          onVerify={(form) => setSelectedForm(form)}
-        />
       </div>
     </div>
   );

@@ -1,28 +1,53 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, CheckCircle, XCircle, AlertCircle, Loader, Download, FileText, Eye } from "lucide-react";
+import { ArrowLeft, CheckCircle, XCircle, AlertCircle, Loader, Download, FileText, Eye, UserCheck } from "lucide-react";
 import { supabase } from "../lib/supabaseClient";
 import { API_ENDPOINTS } from "../config/api";
 
-export default function FormAnalysis({ form, onBack }) {
+export default function FormAnalysis({ form, selectedSignatures = [], onBack }) {
   const [analyzing, setAnalyzing] = useState(false);
   const [results, setResults] = useState(null);
   const [error, setError] = useState(null);
   const [pdfUrl, setPdfUrl] = useState(null);
-  const [showPdf, setShowPdf] = useState(true); // Toggle PDF view
+  const [showPdf, setShowPdf] = useState(true);
+  const [signatureData, setSignatureData] = useState([]);
 
-  // Get PDF URL on mount
+  // Get PDF URL and signature data on mount
   useEffect(() => {
-    const getPdfUrl = async () => {
-      const { data } = await supabase.storage
+    const initialize = async () => {
+      // Get PDF URL
+      const { data: pdfData } = await supabase.storage
         .from('form-uploads')
         .getPublicUrl(form.file_url);
       
-      if (data?.publicUrl) {
-        setPdfUrl(data.publicUrl);
+      if (pdfData?.publicUrl) {
+        setPdfUrl(pdfData.publicUrl);
+      }
+
+      // Get selected signature data
+      if (selectedSignatures.length > 0) {
+        const sigData = await Promise.all(
+          selectedSignatures.map(async (filename) => {
+            const { data: urlData } = supabase.storage
+              .from('signature-references')
+              .getPublicUrl(filename);
+            
+            // Extract name from filename: "JohnSmith_123.png" -> "John Smith"
+            const namePart = filename.split('_')[0];
+            const displayName = namePart.replace(/([A-Z])/g, ' $1').trim();
+            
+            return {
+              name: displayName,
+              url: urlData?.publicUrl,
+              filename
+            };
+          })
+        );
+        setSignatureData(sigData);
       }
     };
-    getPdfUrl();
-  }, [form.file_url]);
+
+    initialize();
+  }, [form.file_url, selectedSignatures]);
 
   const startVerification = async () => {
     setAnalyzing(true);
@@ -39,7 +64,13 @@ export default function FormAnalysis({ form, onBack }) {
         throw new Error("Could not get file URL");
       }
 
-      // Call your backend
+      // Prepare signature references for backend
+      const signatureReferences = signatureData.map(sig => ({
+        name: sig.name,
+        imageUrl: sig.url
+      }));
+
+      // Call backend with signatures
       const response = await fetch(API_ENDPOINTS.FORM_ANALYSIS, {
         method: "POST",
         headers: {
@@ -48,7 +79,8 @@ export default function FormAnalysis({ form, onBack }) {
         body: JSON.stringify({
           documentUrl: urlData.publicUrl,
           formType: "F1BR-CTD",
-          mimeType: "application/pdf"
+          mimeType: "application/pdf",
+          signatureReferences: signatureReferences  // NEW: Pass signatures
         })
       });
 
@@ -107,21 +139,52 @@ export default function FormAnalysis({ form, onBack }) {
           </button>
           
           <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between flex-wrap gap-4">
               <div>
                 <h1 className="text-2xl font-bold mb-2">Form Verification</h1>
                 <p className="text-gray-600">File: <span className="font-medium">{form.filename}</span></p>
               </div>
               
-              {/* Toggle PDF View Button */}
-              <button
-                onClick={() => setShowPdf(!showPdf)}
-                className="flex items-center px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
-              >
-                <Eye size={18} className="mr-2" />
-                {showPdf ? 'Hide' : 'Show'} Document
-              </button>
+              <div className="flex items-center gap-3">
+                {/* Signature Badge */}
+                {signatureData.length > 0 && (
+                  <div className="flex items-center bg-purple-100 text-purple-700 px-3 py-2 rounded-lg">
+                    <UserCheck size={18} className="mr-2" />
+                    <span className="text-sm font-medium">
+                      {signatureData.length} signature(s) to match
+                    </span>
+                  </div>
+                )}
+
+                {/* Toggle PDF View Button */}
+                <button
+                  onClick={() => setShowPdf(!showPdf)}
+                  className="flex items-center px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
+                >
+                  <Eye size={18} className="mr-2" />
+                  {showPdf ? 'Hide' : 'Show'} Document
+                </button>
+              </div>
             </div>
+
+            {/* Show selected signatures preview */}
+            {signatureData.length > 0 && (
+              <div className="mt-4 pt-4 border-t border-gray-200">
+                <p className="text-sm text-gray-600 mb-2">Reference signatures for matching:</p>
+                <div className="flex flex-wrap gap-3">
+                  {signatureData.map((sig, idx) => (
+                    <div key={idx} className="flex items-center bg-gray-50 border border-gray-200 rounded-lg px-3 py-2">
+                      <img 
+                        src={sig.url} 
+                        alt={sig.name}
+                        className="h-8 w-auto mr-2"
+                      />
+                      <span className="text-sm font-medium">{sig.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -156,9 +219,14 @@ export default function FormAnalysis({ form, onBack }) {
                     <CheckCircle size={48} className="text-blue-600" />
                   </div>
                   <h2 className="text-xl font-bold mb-2">Ready to Verify</h2>
-                  <p className="text-gray-600 mb-6">
+                  <p className="text-gray-600 mb-4">
                     Click below to start AI-powered verification. We'll check signatures, dates, field completeness, and FINRA compliance.
                   </p>
+                  {signatureData.length > 0 && (
+                    <p className="text-purple-600 font-medium mb-4">
+                      ✓ Will match against {signatureData.length} reference signature(s)
+                    </p>
+                  )}
                   <button
                     onClick={startVerification}
                     className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium text-lg"
@@ -175,7 +243,12 @@ export default function FormAnalysis({ form, onBack }) {
                 <Loader size={48} className="text-blue-600 animate-spin mx-auto mb-4" />
                 <h2 className="text-xl font-bold mb-2">Analyzing Form...</h2>
                 <p className="text-gray-600">Claude is reviewing the document</p>
-                <p className="text-sm text-gray-500 mt-2">This may take 10-30 seconds</p>
+                {signatureData.length > 0 && (
+                  <p className="text-purple-600 text-sm mt-2">
+                    Comparing signatures against {signatureData.length} reference(s)
+                  </p>
+                )}
+                <p className="text-sm text-gray-500 mt-2">This may take 15-45 seconds</p>
               </div>
             )}
 
