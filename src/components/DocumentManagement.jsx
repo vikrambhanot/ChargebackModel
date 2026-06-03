@@ -1,16 +1,41 @@
-import { useState } from "react";
-import { Database, Sparkles } from 'lucide-react';
+import { useState, useEffect } from "react";
 import DocumentTable from './DocumentTable';
 import FileUploader from './FileUploader';
 import DocumentAnalysis from './DocumentAnalysis';
+import ComplianceAgentIntro from './ComplianceAgentIntro';
+
+// Capgemini palette
+const DEEP_NAVY = '#0B1426';
+const CAP_BLUE_LIGHT = '#3A9DD4';
+
+const ROLLING_MESSAGES = [
+  'Select a document to begin compliance review.',
+  'Upload financial communications, marketing materials, or disclosure documents.',
+  'I will analyze against FINRA and SEC frameworks with full citation trail.',
+];
 
 export default function DocumentManagement() {
   const [refresh, setRefresh] = useState(0);
   const [selectedDoc, setSelectedDoc] = useState(null);
+  const [introShown, setIntroShown] = useState(false);
+  const [messageIndex, setMessageIndex] = useState(0);
+
+  // Rotate rolling message every 5 seconds while on the landing view
+  useEffect(() => {
+    if (!introShown || selectedDoc) return;
+    const interval = setInterval(() => {
+      setMessageIndex((prev) => (prev + 1) % ROLLING_MESSAGES.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [introShown, selectedDoc]);
+
+  if (!introShown) {
+    return <ComplianceAgentIntro onContinue={() => setIntroShown(true)} />;
+  }
 
   if (selectedDoc) {
     return (
-      <DocumentAnalysis 
+      <DocumentAnalysis
         doc={selectedDoc}
         onBack={() => {
           setSelectedDoc(null);
@@ -21,54 +46,92 @@ export default function DocumentManagement() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header Section with gradient card */}
-        <div className="mb-8">
-          <div className="bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-2xl shadow-2xl p-8 text-white">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="flex items-center mb-3">
-                  <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl mr-4">
-                    <Database size={32} />
-                  </div>
-                  <div>
-                    <h1 className="text-4xl font-bold">
-                      FINRA Compliance Analysis
-                    </h1>
-                    <p className="text-purple-100 mt-1 flex items-center">
-                      <Sparkles className="mr-2" size={18} />
-                      AI-Powered Document Compliance Verification
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="hidden md:block">
-                <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
-                  <p className="text-sm text-purple-100 mb-1">Status</p>
-                  <div className="flex items-center">
-                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse mr-2"></div>
-                    <span className="text-lg font-semibold">System Ready</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+    <div
+      style={{
+        minHeight: '100vh',
+        backgroundColor: DEEP_NAVY,
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Ambient gradients — same as intro */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: `
+            radial-gradient(ellipse at 30% 20%, rgba(0,112,173,0.18) 0%, transparent 50%),
+            radial-gradient(ellipse at 70% 80%, rgba(0,112,173,0.10) 0%, transparent 50%)
+          `,
+          pointerEvents: 'none',
+        }}
+      />
+
+      {/* Grid texture */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: `
+            linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)
+          `,
+          backgroundSize: '60px 60px',
+          pointerEvents: 'none',
+        }}
+      />
+
+      <div className="max-w-7xl mx-auto px-6 py-12 relative" style={{ zIndex: 10 }}>
+
+        {/* Agent-voice header with rolling message */}
+        <div style={{ marginBottom: '48px', textAlign: 'center' }}>
+          <div
+            style={{
+              fontSize: '11px',
+              fontWeight: 600,
+              letterSpacing: '0.35em',
+              textTransform: 'uppercase',
+              color: CAP_BLUE_LIGHT,
+              marginBottom: '18px',
+            }}
+          >
+            Compliance Review Agent · Active
+          </div>
+          <div
+            key={messageIndex}
+            style={{
+              color: 'rgba(255,255,255,0.92)',
+              fontWeight: 300,
+              fontSize: '24px',
+              lineHeight: '1.5',
+              maxWidth: '640px',
+              margin: '0 auto',
+              minHeight: '72px',
+              animation: 'message-fade 600ms ease-out',
+            }}
+          >
+            {ROLLING_MESSAGES[messageIndex]}
           </div>
         </div>
-        
-        {/* Upload Section */}
-        <div className="mb-8">
-          <FileUploader 
-            onUploadComplete={() => setRefresh(prev => prev + 1)} 
-          />
+
+        {/* Upload */}
+        <div style={{ marginBottom: '32px' }}>
+          <FileUploader onUploadComplete={() => setRefresh(prev => prev + 1)} />
         </div>
-        
+
         {/* Document Table */}
-        <DocumentTable 
+        <DocumentTable
           refreshTrigger={refresh}
           onAnalyze={(doc) => setSelectedDoc(doc)}
         />
       </div>
+
+      <style>{`
+        @keyframes message-fade {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 }

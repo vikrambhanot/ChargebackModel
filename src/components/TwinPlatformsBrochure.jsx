@@ -19,7 +19,8 @@ export default function TwinPlatformsBrochure() {
               <Sparkles className="w-14 h-14 text-white" />
             </div>
             <div className="text-lg font-bold text-cyan-600">CareerElite</div>
-            <div className="text-base text-gray-600">The Extrovert</div>
+  
+            <div className="text-base text-gray-600">https://careerelite.ai</div>
           </div>
           
           <div className="flex flex-col items-center">
@@ -33,7 +34,8 @@ export default function TwinPlatformsBrochure() {
               <Briefcase className="w-14 h-14 text-white" />
             </div>
             <div className="text-lg font-bold text-purple-600">TalentElite</div>
-            <div className="text-base text-gray-600">The Introvert</div>
+      
+            <div className="text-base text-gray-600">https://talentelite.ai</div>
           </div>
         </div>
 
@@ -122,7 +124,7 @@ export default function TwinPlatformsBrochure() {
               <FeatureItem 
                 icon={<Briefcase className="w-6 h-6" />}
                 color="purple"
-                title="Agentic ATS Stages"
+                title="Agents Interview Candidates"
                 description="Auto-Screen and Auto-HR agents save time with multi-stage hiring pipeline and intelligent scheduling"
               />
               
