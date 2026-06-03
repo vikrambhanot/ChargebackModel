@@ -4,7 +4,6 @@
 
 import { useState, useEffect } from 'react';
 import { ShieldCheck } from 'lucide-react';
-import ArchitectureDiagram from './ArchitectureDiagram';
 
 // Capgemini palette
 const DEEP_NAVY = '#0B1426';
@@ -20,8 +19,8 @@ const MONOLOGUE = [
   "Show me what you need reviewed.",
 ];
 
-const LINE_REVEAL_DELAY = 1400;  // ms between each line appearing
-const INITIAL_DELAY = 400;       // ms before first line appears
+const LINE_REVEAL_DELAY = 200;   // ms between each line appearing
+const INITIAL_DELAY = 300;       // ms before first line appears
 
 export default function ComplianceAgentIntro({ onContinue }) {
   const [visibleCount, setVisibleCount] = useState(0);
@@ -97,137 +96,100 @@ export default function ComplianceAgentIntro({ onContinue }) {
         }}
       />
 
-      {/* Two-column content: monologue left, architecture diagram right */}
+      {/* Center content */}
       <div
         style={{
           position: 'relative',
           height: '100%',
           display: 'flex',
+          flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
           padding: '40px',
-          maxWidth: '1280px',
+          maxWidth: '880px',
           margin: '0 auto',
           zIndex: 10,
-          gap: '64px',
         }}
       >
-        {/* Left column: agent identity + monologue */}
+        {/* Agent identity mark */}
+        <AgentMark />
+
+        {/* Agent label */}
         <div
           style={{
-            flex: '1 1 0',
-            maxWidth: '600px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'flex-start',
+            marginTop: '32px',
+            fontSize: '11px',
+            fontWeight: 600,
+            letterSpacing: '0.35em',
+            textTransform: 'uppercase',
+            color: CAP_BLUE_LIGHT,
+            opacity: 0.85,
           }}
         >
-          {/* Agent identity mark */}
-          <AgentMark />
-
-          {/* Agent label */}
-          <div
-            style={{
-              marginTop: '28px',
-              fontSize: '11px',
-              fontWeight: 600,
-              letterSpacing: '0.35em',
-              textTransform: 'uppercase',
-              color: CAP_BLUE_LIGHT,
-              opacity: 0.85,
-            }}
-          >
-            Compliance Review Agent
-          </div>
-
-          {/* Divider */}
-          <div
-            style={{
-              width: '40px',
-              height: '1px',
-              backgroundColor: 'rgba(255,255,255,0.2)',
-              margin: '20px 0 28px',
-            }}
-          />
-
-          {/* Monologue */}
-          <div
-            style={{
-              minHeight: '280px',
-              color: 'rgba(255,255,255,0.92)',
-              fontWeight: 300,
-              fontSize: '19px',
-              lineHeight: '1.6',
-              letterSpacing: '0.005em',
-              textAlign: 'left',
-            }}
-          >
-            {MONOLOGUE.map((para, i) => (
-              <p
-                key={i}
-                style={{
-                  marginBottom: '16px',
-                  opacity: i < visibleCount ? 0.95 : 0,
-                  transform: i < visibleCount ? 'translateY(0)' : 'translateY(8px)',
-                  transition: 'opacity 700ms ease-out, transform 700ms ease-out',
-                }}
-              >
-                {para}
-              </p>
-            ))}
-          </div>
-
-          {/* Click-to-continue prompt */}
-          <div
-            style={{
-              marginTop: '32px',
-              height: '32px',
-              opacity: complete ? 1 : 0,
-              transition: 'opacity 800ms ease-in',
-            }}
-          >
-            {complete && (
-              <div
-                style={{
-                  fontSize: '12px',
-                  fontWeight: 500,
-                  letterSpacing: '0.2em',
-                  textTransform: 'uppercase',
-                  color: 'rgba(255,255,255,0.6)',
-                  animation: 'fade-pulse 2.4s ease-in-out infinite',
-                }}
-              >
-                Click anywhere to continue
-              </div>
-            )}
-          </div>
+          Compliance Review Agent
         </div>
 
-        {/* Right column: architecture diagram — fades in once monologue is mostly revealed */}
+        {/* Divider */}
         <div
           style={{
-            flex: '1 1 0',
-            maxWidth: '460px',
-            opacity: visibleCount >= 2 ? 1 : 0,
-            transform: visibleCount >= 2 ? 'translateY(0)' : 'translateY(12px)',
-            transition: 'opacity 900ms ease-out, transform 900ms ease-out',
+            width: '40px',
+            height: '1px',
+            backgroundColor: 'rgba(255,255,255,0.2)',
+            margin: '24px 0 36px',
           }}
-          className="hidden lg:block"
+        />
+
+        {/* Monologue */}
+        <div
+          style={{
+            minHeight: '320px',
+            maxWidth: '720px',
+            textAlign: 'center',
+            color: 'rgba(255,255,255,0.92)',
+            fontWeight: 300,
+            fontSize: '20px',
+            lineHeight: '1.6',
+            letterSpacing: '0.005em',
+          }}
         >
-          <div
-            style={{
-              fontSize: '11px',
-              fontWeight: 600,
-              letterSpacing: '0.35em',
-              textTransform: 'uppercase',
-              color: CAP_BLUE_LIGHT,
-              opacity: 0.7,
-              marginBottom: '20px',
-            }}
-          >
-            Review Architecture
-          </div>
-          <ArchitectureDiagram />
+          {MONOLOGUE.map((para, i) => (
+            <p
+              key={i}
+              style={{
+                marginBottom: '18px',
+                opacity: i < visibleCount ? 0.95 : 0,
+                transform: i < visibleCount ? 'translateY(0)' : 'translateY(8px)',
+                transition: 'opacity 700ms ease-out, transform 700ms ease-out',
+              }}
+            >
+              {para}
+            </p>
+          ))}
+        </div>
+
+        {/* Click-to-continue prompt */}
+        <div
+          style={{
+            marginTop: '40px',
+            height: '32px',
+            opacity: complete ? 1 : 0,
+            transition: 'opacity 800ms ease-in',
+          }}
+        >
+          {complete && (
+            <div
+              style={{
+                fontSize: '12px',
+                fontWeight: 500,
+                letterSpacing: '0.2em',
+                textTransform: 'uppercase',
+                color: 'rgba(255,255,255,0.6)',
+                animation: 'fade-pulse 2.4s ease-in-out infinite',
+              }}
+            >
+              Click anywhere to continue
+            </div>
+          )}
         </div>
 
         {/* Skip hint (only visible while revealing) */}

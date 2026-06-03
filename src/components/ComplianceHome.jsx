@@ -11,6 +11,7 @@ import {
   AlertTriangle,
   ArrowRight,
 } from 'lucide-react';
+import PlatformStack from './PlatformStack';
 
 // Capgemini palette
 const NAVY = '#14213D';
@@ -109,7 +110,7 @@ export default function ComplianceHome({ onLaunch }) {
     <div>
       {/* HERO — light section with abstract architectural composition + translucent blue overlay card */}
       <section style={{ backgroundColor: '#E8E8E0', position: 'relative', overflow: 'hidden' }}>
-        <div className="max-w-7xl mx-auto px-6 relative" style={{ minHeight: '480px' }}>
+        <div className="max-w-7xl mx-auto px-6 relative" style={{ minHeight: '620px' }}>
           {/* Abstract composition — geometric shapes evoking the bookshelf-sculpture vibe */}
           <div
             className="absolute inset-0"
@@ -120,6 +121,14 @@ export default function ComplianceHome({ onLaunch }) {
               `,
             }}
           />
+
+          {/* Platform stack — right side, anchored opposite the translucent card */}
+          <div
+            className="absolute hidden lg:block"
+            style={{ right: '4%', top: '60px' }}
+          >
+            <PlatformStack />
+          </div>
 
           {/* Translucent blue overlay card — the signature Capgemini move */}
           <div
