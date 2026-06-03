@@ -1,6 +1,20 @@
 // src/components/analysis/FINRAComplianceRules.jsx
-import { CheckSquare, Square, Edit2, Save } from "lucide-react";
+import { CheckSquare, Square, Edit2, Save, Shield, ArrowRight, ArrowLeft } from "lucide-react";
 import { useState } from "react";
+
+// Capgemini palette
+const NAVY = '#14213D';
+const TEXT_MUTED = '#5C6B82';
+const CAP_BLUE = '#0070AD';
+const CAP_BLUE_DARK = '#005A8C';
+const PAGE_BG_TINT = '#F0F4F8';
+const SURFACE = '#FFFFFF';
+const BORDER = '#D8E1EA';
+const BORDER_ACTIVE = '#0070AD';
+
+// Muted severity
+const SEV_CRITICAL = { fg: '#B85450', bg: '#FDF1F0' };
+const SEV_WARNING = { fg: '#C68A4F', bg: '#FDF6EE' };
 
 const DEFAULT_FINRA_RULES = [
   {
@@ -68,7 +82,7 @@ export default function FINRAComplianceRules({ onProceed, onBack }) {
   const [editedGuidelines, setEditedGuidelines] = useState("");
 
   const toggleRule = (ruleId) => {
-    setRules(rules.map(rule => 
+    setRules(rules.map(rule =>
       rule.id === ruleId ? { ...rule, enabled: !rule.enabled } : rule
     ));
   };
@@ -84,7 +98,7 @@ export default function FINRAComplianceRules({ onProceed, onBack }) {
   };
 
   const saveEdit = () => {
-    setRules(rules.map(rule => 
+    setRules(rules.map(rule =>
       rule.id === editingRule ? { ...rule, guidelines: editedGuidelines } : rule
     ));
     setEditingRule(null);
@@ -93,105 +107,171 @@ export default function FINRAComplianceRules({ onProceed, onBack }) {
   const selectedCount = rules.filter(r => r.enabled).length;
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          Select FINRA Compliance Rules
+    <div style={{
+      backgroundColor: SURFACE,
+      borderRadius: '10px',
+      border: `1px solid ${BORDER}`,
+      padding: '32px',
+      boxShadow: '0 1px 3px rgba(20, 33, 61, 0.04)',
+    }}>
+      <div style={{ marginBottom: '24px' }}>
+        <h2 style={{ color: NAVY, fontSize: '22px', fontWeight: 500, margin: '0 0 6px', letterSpacing: '-0.01em' }}>
+          Select Compliance Rules
         </h2>
-        <p className="text-gray-600">
-          Choose which rules to check against. You can customize the guidelines for each rule.
+        <p style={{ color: TEXT_MUTED, fontSize: '14px', margin: 0 }}>
+          Choose which rules to apply. You can customize the guidelines for each rule.
         </p>
       </div>
 
-      <div className="mb-4 flex justify-between items-center p-4 bg-blue-50 rounded-lg">
-        <div>
-          <span className="font-semibold text-blue-900">
-            {selectedCount} of {rules.length} rules selected
-          </span>
+      {/* Selection bar */}
+      <div style={{
+        backgroundColor: PAGE_BG_TINT,
+        border: `1px solid ${BORDER}`,
+        borderRadius: '8px',
+        padding: '12px 16px',
+        marginBottom: '20px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      }}>
+        <div style={{ fontSize: '13px', color: NAVY, fontWeight: 500 }}>
+          <span style={{ color: CAP_BLUE, fontWeight: 600 }}>{selectedCount}</span> of {rules.length} rules selected
         </div>
         <button
           onClick={toggleAll}
-          className="flex items-center text-blue-600 hover:text-blue-800 font-medium"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            background: 'none',
+            border: 'none',
+            color: CAP_BLUE,
+            fontSize: '13px',
+            fontWeight: 600,
+            cursor: 'pointer',
+            padding: '4px 8px',
+            borderRadius: '4px',
+          }}
         >
-          {rules.every(r => r.enabled) ? (
-            <>
-              <Square className="mr-2" size={20} />
-              Deselect All
-            </>
-          ) : (
-            <>
-              <CheckSquare className="mr-2" size={20} />
-              Select All
-            </>
-          )}
+          {rules.every(r => r.enabled) ? <Square size={14} /> : <CheckSquare size={14} />}
+          {rules.every(r => r.enabled) ? 'Deselect all' : 'Select all'}
         </button>
       </div>
 
-      <div className="space-y-4 mb-6">
+      {/* Rules list */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>
         {rules.map((rule) => (
           <div
             key={rule.id}
-            className={`border-2 rounded-lg p-4 transition-all ${
-              rule.enabled
-                ? 'border-blue-300 bg-blue-50'
-                : 'border-gray-200 bg-gray-50'
-            }`}
+            style={{
+              border: `1px solid ${rule.enabled ? BORDER_ACTIVE : BORDER}`,
+              backgroundColor: rule.enabled ? '#F8FBFD' : SURFACE,
+              borderRadius: '8px',
+              padding: '16px',
+              transition: 'all 150ms ease',
+            }}
           >
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex items-start flex-1">
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', flex: 1, minWidth: 0 }}>
                 <button
                   onClick={() => toggleRule(rule.id)}
-                  className="mr-3 mt-1"
+                  style={{ marginRight: '12px', marginTop: '2px', background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}
                 >
                   {rule.enabled ? (
-                    <CheckSquare className="text-blue-600" size={24} />
+                    <CheckSquare size={20} color={CAP_BLUE} />
                   ) : (
-                    <Square className="text-gray-400" size={24} />
+                    <Square size={20} color="#A3B0C2" />
                   )}
                 </button>
-                <div className="flex-1">
-                  <h3 className="font-bold text-gray-900">{rule.name}</h3>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="text-xs px-2 py-1 rounded bg-gray-200 text-gray-700">
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <h3 style={{ color: NAVY, fontSize: '14px', fontWeight: 600, margin: '0 0 6px' }}>
+                    {rule.name}
+                  </h3>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{
+                      fontSize: '10px',
+                      fontWeight: 600,
+                      letterSpacing: '0.05em',
+                      textTransform: 'uppercase',
+                      padding: '2px 8px',
+                      borderRadius: '3px',
+                      backgroundColor: PAGE_BG_TINT,
+                      color: TEXT_MUTED,
+                    }}>
                       {rule.category}
                     </span>
-                    <span
-                      className={`text-xs px-2 py-1 rounded ${
-                        rule.severity === 'critical'
-                          ? 'bg-red-100 text-red-700'
-                          : 'bg-yellow-100 text-yellow-700'
-                      }`}
-                    >
+                    <span style={{
+                      fontSize: '10px',
+                      fontWeight: 600,
+                      letterSpacing: '0.05em',
+                      textTransform: 'uppercase',
+                      padding: '2px 8px',
+                      borderRadius: '3px',
+                      backgroundColor: rule.severity === 'critical' ? SEV_CRITICAL.bg : SEV_WARNING.bg,
+                      color: rule.severity === 'critical' ? SEV_CRITICAL.fg : SEV_WARNING.fg,
+                    }}>
                       {rule.severity === 'critical' ? 'Critical' : 'Warning'}
                     </span>
                   </div>
                 </div>
               </div>
-              
+
               <button
                 onClick={() => editingRule === rule.id ? saveEdit() : startEditing(rule)}
-                className="ml-4 p-2 hover:bg-white rounded-lg transition-colors"
+                style={{
+                  marginLeft: '12px',
+                  padding: '6px',
+                  background: 'none',
+                  border: `1px solid ${BORDER}`,
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  color: editingRule === rule.id ? '#5C8E5C' : TEXT_MUTED,
+                }}
                 title={editingRule === rule.id ? "Save" : "Edit guidelines"}
               >
-                {editingRule === rule.id ? (
-                  <Save className="text-green-600" size={20} />
-                ) : (
-                  <Edit2 className="text-gray-600" size={20} />
-                )}
+                {editingRule === rule.id ? <Save size={14} /> : <Edit2 size={14} />}
               </button>
             </div>
 
-            <div className="ml-9">
-              <h4 className="text-sm font-semibold text-gray-700 mb-2">Guidelines:</h4>
+            <div style={{ marginLeft: '32px' }}>
+              <div style={{
+                fontSize: '11px',
+                fontWeight: 600,
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+                color: TEXT_MUTED,
+                marginBottom: '6px',
+              }}>
+                Guidelines
+              </div>
               {editingRule === rule.id ? (
                 <textarea
                   value={editedGuidelines}
                   onChange={(e) => setEditedGuidelines(e.target.value)}
-                  className="w-full p-3 border border-blue-300 rounded-lg text-sm font-mono focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    border: `1px solid ${BORDER_ACTIVE}`,
+                    borderRadius: '6px',
+                    fontSize: '13px',
+                    fontFamily: 'inherit',
+                    color: NAVY,
+                    outline: 'none',
+                    resize: 'vertical',
+                  }}
                   rows={6}
                 />
               ) : (
-                <div className="text-sm text-gray-600 whitespace-pre-line bg-white p-3 rounded border border-gray-200">
+                <div style={{
+                  fontSize: '12.5px',
+                  color: TEXT_MUTED,
+                  whiteSpace: 'pre-line',
+                  backgroundColor: PAGE_BG_TINT,
+                  padding: '12px 14px',
+                  borderRadius: '6px',
+                  lineHeight: 1.6,
+                }}>
                   {rule.guidelines}
                 </div>
               )}
@@ -200,20 +280,57 @@ export default function FINRAComplianceRules({ onProceed, onBack }) {
         ))}
       </div>
 
-      <div className="flex gap-4">
+      {/* Actions */}
+      <div style={{ display: 'flex', gap: '12px' }}>
         <button
           onClick={onBack}
-          className="flex-1 bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-all"
+          style={{
+            flex: 1,
+            padding: '14px 20px',
+            backgroundColor: 'transparent',
+            color: NAVY,
+            border: `1px solid ${BORDER}`,
+            borderRadius: '6px',
+            fontSize: '14px',
+            fontWeight: 600,
+            cursor: 'pointer',
+            transition: 'all 150ms ease',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = PAGE_BG_TINT; }}
+          onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
         >
+          <ArrowLeft size={14} />
           Back to Preview
         </button>
         <button
           onClick={() => onProceed(rules.filter(r => r.enabled))}
           disabled={selectedCount === 0}
-          className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+          style={{
+            flex: 1,
+            padding: '14px 20px',
+            backgroundColor: selectedCount === 0 ? '#C5CFDB' : CAP_BLUE,
+            color: 'white',
+            border: 'none',
+            borderRadius: '6px',
+            fontSize: '14px',
+            fontWeight: 600,
+            cursor: selectedCount === 0 ? 'not-allowed' : 'pointer',
+            transition: 'background-color 150ms ease',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+          }}
+          onMouseEnter={(e) => { if (selectedCount > 0) e.currentTarget.style.backgroundColor = CAP_BLUE_DARK; }}
+          onMouseLeave={(e) => { if (selectedCount > 0) e.currentTarget.style.backgroundColor = CAP_BLUE; }}
         >
-          <CheckSquare className="mr-2" size={20} />
-          Analyze Document ({selectedCount} rules)
+          <Shield size={14} />
+          Analyze ({selectedCount} rules)
+          <ArrowRight size={14} />
         </button>
       </div>
     </div>
