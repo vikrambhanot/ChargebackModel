@@ -121,29 +121,6 @@ export default function ComplianceHome({ onLaunch }) {
             }}
           />
 
-          {/* Geometric architectural shapes — right side, abstract bookshelf vibe */}
-          <div className="absolute hidden lg:block" style={{ right: '5%', top: '40px', width: '420px', height: '400px' }}>
-            {/* Vertical pillars */}
-            <div style={{ position: 'absolute', left: '0', top: '60px', width: '12px', height: '320px', backgroundColor: NAVY }} />
-            <div style={{ position: 'absolute', left: '180px', top: '0', width: '12px', height: '380px', backgroundColor: NAVY }} />
-            <div style={{ position: 'absolute', right: '60px', top: '100px', width: '12px', height: '280px', backgroundColor: NAVY }} />
-
-            {/* Horizontal shelves */}
-            <div style={{ position: 'absolute', left: '0', top: '60px', width: '380px', height: '12px', backgroundColor: NAVY }} />
-            <div style={{ position: 'absolute', left: '0', top: '200px', width: '300px', height: '12px', backgroundColor: NAVY }} />
-            <div style={{ position: 'absolute', left: '0', top: '380px', width: '380px', height: '12px', backgroundColor: NAVY }} />
-
-            {/* Decorative blocks (like books on shelves) */}
-            <div style={{ position: 'absolute', left: '40px', top: '100px', width: '40px', height: '90px', backgroundColor: '#7A4F3A' }} />
-            <div style={{ position: 'absolute', left: '90px', top: '120px', width: '32px', height: '70px', backgroundColor: '#3F5A3F' }} />
-            <div style={{ position: 'absolute', left: '130px', top: '110px', width: '36px', height: '80px', backgroundColor: '#A8927B' }} />
-            <div style={{ position: 'absolute', left: '60px', top: '240px', width: '50px', height: '130px', backgroundColor: '#4A6B8A' }} />
-            <div style={{ position: 'absolute', left: '120px', top: '260px', width: '60px', height: '110px', backgroundColor: '#5C7F5C' }} />
-
-            {/* Cylinder */}
-            <div style={{ position: 'absolute', right: '20px', bottom: '12px', width: '70px', height: '120px', backgroundColor: '#3A6B4A', borderRadius: '50% 50% 0 0 / 8px 8px 0 0' }} />
-          </div>
-
           {/* Translucent blue overlay card — the signature Capgemini move */}
           <div
             className="relative z-10"
@@ -164,8 +141,8 @@ export default function ComplianceHome({ onLaunch }) {
               The Compliance<br />Intelligence Platform
             </h1>
             <p className="text-white/90 text-base leading-relaxed mb-8 max-w-md">
-              A regulatory AI suite for financial services firms. Domain-trained models meet
-              firm-configurable rule libraries to operationalize compliance review at scale.
+              Regulatory AI for financial services. Customized to your firm's
+              rules, processes, and risk thresholds.
             </p>
             <button
               onClick={() => onLaunch('finra')}
