@@ -296,7 +296,7 @@ function DomainCard({ domain, onLaunch }) {
           </div>
         ) : (
           <div className="text-sm font-medium text-white/50">
-            On roadmap
+          
           </div>
         )}
       </div>
