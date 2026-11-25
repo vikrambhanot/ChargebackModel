@@ -2,17 +2,14 @@
 // 3D-feel layered stack showing the platform architecture.
 // Bottom-up: Data Domains → Semantic Layer → Agent Orchestration → Agents → Personas
 
-const NAVY = '#14213D';
-const CAP_BLUE = '#0070AD';
-
 // Layers, top-to-bottom in render order (top of stack first)
 const LAYERS = [
   {
     id: 'personas',
     title: 'Personas',
     items: ['Compliance Officer', 'Advisor', 'Auditor', 'Counsel'],
-    fill: '#0070AD',
-    border: '#005A8C',
+    fill: '#E31837',
+    border: '#B8122C',
     textColor: '#FFFFFF',
     itemBg: 'rgba(255,255,255,0.18)',
   },
@@ -20,8 +17,8 @@ const LAYERS = [
     id: 'agents',
     title: 'Agents',
     items: ['FINRA Agent', 'AML Agent', 'KYC Agent', 'Reg BI Agent'],
-    fill: '#1F7FB5',
-    border: '#176896',
+    fill: '#B8122C',
+    border: '#8E0E22',
     textColor: '#FFFFFF',
     itemBg: 'rgba(255,255,255,0.18)',
   },
@@ -29,28 +26,28 @@ const LAYERS = [
     id: 'orchestration',
     title: 'Agent Orchestration',
     items: ['Routing', 'Multi-step reasoning', 'Tool invocation'],
-    fill: '#3A8FBE',
-    border: '#2D7BA8',
+    fill: '#2A2A2A',
+    border: '#141414',
     textColor: '#FFFFFF',
-    itemBg: 'rgba(255,255,255,0.18)',
+    itemBg: 'rgba(255,255,255,0.14)',
   },
   {
     id: 'semantic',
     title: 'Semantic Layer',
     items: ['Rule libraries', 'Retrieval', 'Citation graph'],
-    fill: '#5DA1C8',
-    border: '#4C8BAF',
+    fill: '#4A4A4A',
+    border: '#333333',
     textColor: '#FFFFFF',
-    itemBg: 'rgba(255,255,255,0.20)',
+    itemBg: 'rgba(255,255,255,0.16)',
   },
   {
     id: 'data',
     title: 'Data Domains',
     items: ['Communications', 'Marketing', 'Disclosures', 'Trade Data'],
-    fill: '#86B5D2',
-    border: '#6F9DBA',
-    textColor: '#14213D',
-    itemBg: 'rgba(20,33,61,0.10)',
+    fill: '#D6D6D6',
+    border: '#B5B5B5',
+    textColor: '#141414',
+    itemBg: 'rgba(20,20,20,0.08)',
   },
 ];
 
@@ -87,23 +84,13 @@ export default function PlatformStack() {
 }
 
 function Layer({ layer, index, yOffset }) {
-  // Build the slab as an SVG polygon for clean angled edges + side face for depth
   const w = STACK_WIDTH;
   const h = LAYER_HEIGHT;
   const skew = SKEW_X;
 
-  // Front face: a parallelogram (top edge offset right by `skew` from bottom edge)
-  // Top-back-left: (skew, 0)
-  // Top-back-right: (w + skew, 0)
-  // Bottom-front-right: (w, h)
-  // Bottom-front-left: (0, h)
   const frontPath = `M ${skew},0 L ${w + skew},0 L ${w},${h} L 0,${h} Z`;
-
-  // Right side face (for 3D depth) — visible right edge
   const sideDepth = 10;
   const sidePath = `M ${w + skew},0 L ${w + skew + sideDepth},${sideDepth} L ${w + sideDepth},${h + sideDepth} L ${w},${h} Z`;
-
-  // Top edge highlight (subtle bright line)
   const topHighlightPath = `M ${skew},0 L ${w + skew},0`;
 
   return (
@@ -122,39 +109,12 @@ function Layer({ layer, index, yOffset }) {
         height={h + sideDepth}
         style={{ position: 'absolute', inset: 0 }}
       >
-        {/* Side face (depth) — darker shade */}
-        <path
-          d={sidePath}
-          fill={layer.border}
-          opacity="0.85"
-        />
-
-        {/* Front face */}
-        <path
-          d={frontPath}
-          fill={layer.fill}
-          stroke={layer.border}
-          strokeWidth="0.5"
-        />
-
-        {/* Top edge highlight */}
-        <path
-          d={topHighlightPath}
-          stroke="rgba(255,255,255,0.25)"
-          strokeWidth="1"
-          fill="none"
-        />
-
-        {/* Subtle bottom shadow line */}
-        <path
-          d={`M 0,${h} L ${w},${h}`}
-          stroke="rgba(0,0,0,0.15)"
-          strokeWidth="1"
-          fill="none"
-        />
+        <path d={sidePath} fill={layer.border} opacity="0.85" />
+        <path d={frontPath} fill={layer.fill} stroke={layer.border} strokeWidth="0.5" />
+        <path d={topHighlightPath} stroke="rgba(255,255,255,0.25)" strokeWidth="1" fill="none" />
+        <path d={`M 0,${h} L ${w},${h}`} stroke="rgba(0,0,0,0.15)" strokeWidth="1" fill="none" />
       </svg>
 
-      {/* Content overlay (HTML inside the slab) */}
       <div
         style={{
           position: 'absolute',
@@ -177,13 +137,7 @@ function Layer({ layer, index, yOffset }) {
         >
           {layer.title}
         </div>
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '4px',
-          }}
-        >
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
           {layer.items.map((item) => (
             <span
               key={item}

@@ -13,12 +13,29 @@ import {
 } from 'lucide-react';
 import PlatformStack from './PlatformStack';
 
-// Capgemini palette
-const NAVY = '#14213D';
-const DEEP_NAVY = '#0B1426';
-const CAP_BLUE = '#0070AD';
-const CAP_BLUE_DARK = '#005A8C';
-const OFF_WHITE = '#F5F5F0';
+// Onix-aligned palette (keep in sync with App.jsx)
+const ONIX_RED = '#E31837';
+const ONIX_RED_DARK = '#B8122C';
+const INK = '#141414';
+const CHARCOAL = '#1F1F1F';
+const CARD_DARK = '#262626';
+const OFF_WHITE = '#F7F7F7';
+const LIGHT_GRAY = '#ECECEC';
+
+const Triangle = ({ size = 14, color = ONIX_RED, style = {} }) => (
+  <span
+    aria-hidden="true"
+    style={{
+      display: 'inline-block',
+      width: 0,
+      height: 0,
+      borderLeft: `${size * 0.6}px solid transparent`,
+      borderRight: `${size * 0.6}px solid transparent`,
+      borderBottom: `${size}px solid ${color}`,
+      ...style,
+    }}
+  />
+);
 
 const COMPLIANCE_DOMAINS = [
   {
@@ -108,33 +125,31 @@ const COMPLIANCE_DOMAINS = [
 export default function ComplianceHome({ onLaunch }) {
   return (
     <div>
-      {/* HERO — light section with abstract architectural composition + translucent blue overlay card */}
-      <section style={{ backgroundColor: '#E8E8E0', position: 'relative', overflow: 'hidden' }}>
+      {/* HERO */}
+      <section style={{ backgroundColor: LIGHT_GRAY, position: 'relative', overflow: 'hidden' }}>
         <div className="max-w-7xl mx-auto px-6 relative" style={{ minHeight: '620px' }}>
-          {/* Abstract composition — geometric shapes evoking the bookshelf-sculpture vibe */}
+          {/* Subtle background composition */}
           <div
             className="absolute inset-0"
             style={{
               backgroundImage: `
-                linear-gradient(135deg, transparent 0%, transparent 50%, rgba(20,33,61,0.04) 50%, rgba(20,33,61,0.04) 100%),
-                radial-gradient(circle at 75% 30%, rgba(0,112,173,0.06) 0%, transparent 50%)
+                linear-gradient(135deg, transparent 0%, transparent 50%, rgba(20,20,20,0.035) 50%, rgba(20,20,20,0.035) 100%),
+                radial-gradient(circle at 75% 30%, rgba(227,24,55,0.06) 0%, transparent 50%)
               `,
             }}
           />
 
-          {/* Platform stack — right side, anchored opposite the translucent card */}
-          <div
-            className="absolute hidden lg:block"
-            style={{ right: '4%', top: '60px' }}
-          >
+          {/* Platform stack — right side */}
+          <div className="absolute hidden lg:block" style={{ right: '4%', top: '60px' }}>
             <PlatformStack />
           </div>
 
-          {/* Translucent blue overlay card — the signature Capgemini move */}
+          {/* Hero card */}
           <div
             className="relative z-10"
             style={{
-              backgroundColor: 'rgba(0, 112, 173, 0.92)',
+              backgroundColor: 'rgba(20, 20, 20, 0.94)',
+              borderTop: `4px solid ${ONIX_RED}`,
               padding: '60px 56px',
               maxWidth: '620px',
               marginTop: '80px',
@@ -143,20 +158,29 @@ export default function ComplianceHome({ onLaunch }) {
               WebkitBackdropFilter: 'blur(8px)',
             }}
           >
-            {/* <div className="text-xs font-medium text-white/80 uppercase tracking-widest mb-4">
-              Capgemini Financial Services
-            </div> */}
-            <h1 className="text-white font-light tracking-tight mb-4" style={{ fontSize: '52px', lineHeight: '1.05' }}>
+            <Triangle size={22} style={{ position: 'absolute', top: '28px', right: '32px' }} />
+            <div
+              className="text-xs font-semibold uppercase tracking-widest mb-4"
+              style={{ color: ONIX_RED }}
+            >
+              AI Compliance Workbench
+            </div>
+            <h1
+              className="text-white font-light tracking-tight mb-4"
+              style={{ fontSize: '52px', lineHeight: '1.05' }}
+            >
               The Compliance<br />Intelligence Platform
             </h1>
-            <p className="text-white/90 text-base leading-relaxed mb-8 max-w-md">
+            <p className="text-white/80 text-base leading-relaxed mb-8 max-w-md">
               Regulatory AI for financial services. Customized to your firm's
               rules, processes, and risk thresholds.
             </p>
             <button
               onClick={() => onLaunch('finra')}
-              className="inline-flex items-center gap-3 bg-white px-7 py-3.5 font-semibold text-sm hover:bg-slate-100 transition-colors"
-              style={{ color: NAVY }}
+              className="inline-flex items-center gap-3 px-7 py-3.5 font-semibold text-sm text-white transition-colors"
+              style={{ backgroundColor: ONIX_RED }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = ONIX_RED_DARK)}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = ONIX_RED)}
             >
               Explore the platform
               <ArrowRight size={16} />
@@ -165,15 +189,22 @@ export default function ComplianceHome({ onLaunch }) {
         </div>
       </section>
 
-      {/* MODULE GRID — dark band (Highlights-style) */}
-      <section style={{ backgroundColor: DEEP_NAVY }}>
+      {/* MODULE GRID */}
+      <section style={{ backgroundColor: INK }}>
         <div className="max-w-7xl mx-auto px-6 py-20">
           <div className="flex items-baseline justify-between mb-10">
             <div>
-              <div className="text-xs font-medium uppercase tracking-widest mb-3" style={{ color: CAP_BLUE }}>
+              <div
+                className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest mb-3"
+                style={{ color: ONIX_RED }}
+              >
+                <Triangle size={10} />
                 Platform Modules
               </div>
-              <h2 className="text-white font-light tracking-tight" style={{ fontSize: '40px', lineHeight: '1.1' }}>
+              <h2
+                className="text-white font-light tracking-tight"
+                style={{ fontSize: '40px', lineHeight: '1.1' }}
+              >
                 Ten regulatory domains.<br />One platform.
               </h2>
             </div>
@@ -190,29 +221,36 @@ export default function ComplianceHome({ onLaunch }) {
         </div>
       </section>
 
-      {/* CTA BAND — light, closes the band pattern back to off-white before footer goes dark */}
+      {/* CTA BAND */}
       <section style={{ backgroundColor: OFF_WHITE }}>
         <div className="max-w-7xl mx-auto px-6 py-16">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
             <div>
-              <div className="text-xs font-medium uppercase tracking-widest mb-3" style={{ color: CAP_BLUE }}>
+              <div
+                className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest mb-3"
+                style={{ color: ONIX_RED }}
+              >
+                <Triangle size={10} />
                 Get Started
               </div>
-              <h3 className="font-light tracking-tight mb-4" style={{ fontSize: '36px', lineHeight: '1.15', color: NAVY }}>
+              <h3
+                className="font-light tracking-tight mb-4"
+                style={{ fontSize: '36px', lineHeight: '1.15', color: CHARCOAL }}
+              >
                 Bring AI-powered compliance review to your firm.
               </h3>
-              <p className="text-base leading-relaxed" style={{ color: '#4A5568' }}>
-                Schedule a briefing with our financial services compliance practice to
-                explore how the platform applies to your regulatory environment.
+              <p className="text-base leading-relaxed" style={{ color: '#4A4A4A' }}>
+                Schedule a briefing to explore how the platform applies to your
+                regulatory environment.
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4 md:justify-end">
               <button
                 onClick={() => onLaunch('finra')}
                 className="inline-flex items-center justify-center gap-2 px-7 py-3.5 font-semibold text-sm text-white transition-colors"
-                style={{ backgroundColor: CAP_BLUE }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = CAP_BLUE_DARK)}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = CAP_BLUE)}
+                style={{ backgroundColor: ONIX_RED }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = ONIX_RED_DARK)}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = ONIX_RED)}
               >
                 Launch FINRA module
                 <ArrowRight size={16} />
@@ -220,9 +258,15 @@ export default function ComplianceHome({ onLaunch }) {
               <a
                 href="#contact"
                 className="inline-flex items-center justify-center gap-2 px-7 py-3.5 font-semibold text-sm border-2 transition-colors"
-                style={{ borderColor: NAVY, color: NAVY }}
-                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = NAVY; e.currentTarget.style.color = 'white'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = NAVY; }}
+                style={{ borderColor: CHARCOAL, color: CHARCOAL }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = CHARCOAL;
+                  e.currentTarget.style.color = 'white';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.color = CHARCOAL;
+                }}
               >
                 Schedule a briefing
               </a>
@@ -249,29 +293,29 @@ function DomainCard({ domain, onLaunch }) {
         isActive ? 'cursor-pointer' : ''
       }`}
       style={{
-        backgroundColor: isActive ? CAP_BLUE : '#1A2B47',
+        backgroundColor: isActive ? ONIX_RED : CARD_DARK,
+        borderTop: isActive ? 'none' : '1px solid rgba(255,255,255,0.06)',
         minHeight: '280px',
       }}
       onMouseEnter={(e) => {
-        if (isActive) {
-          e.currentTarget.style.backgroundColor = CAP_BLUE_DARK;
-        }
+        e.currentTarget.style.backgroundColor = isActive ? ONIX_RED_DARK : '#2E2E2E';
       }}
       onMouseLeave={(e) => {
-        if (isActive) {
-          e.currentTarget.style.backgroundColor = CAP_BLUE;
-        }
+        e.currentTarget.style.backgroundColor = isActive ? ONIX_RED : CARD_DARK;
       }}
     >
       <div className="p-7 h-full flex flex-col">
         <div className="flex items-start justify-between mb-6">
-          <div className="w-12 h-12 flex items-center justify-center" style={{ backgroundColor: 'rgba(255,255,255,0.12)' }}>
-            <Icon size={22} className="text-white" />
+          <div
+            className="w-12 h-12 flex items-center justify-center"
+            style={{ backgroundColor: isActive ? 'rgba(255,255,255,0.15)' : 'rgba(227,24,55,0.12)' }}
+          >
+            <Icon size={22} style={{ color: isActive ? '#FFFFFF' : ONIX_RED }} />
           </div>
           {isActive && (
             <span
               className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-bold text-white"
-              style={{ backgroundColor: 'rgba(255,255,255,0.18)', letterSpacing: '0.05em' }}
+              style={{ backgroundColor: 'rgba(255,255,255,0.2)', letterSpacing: '0.05em' }}
             >
               <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
               LIVE
@@ -279,13 +323,19 @@ function DomainCard({ domain, onLaunch }) {
           )}
         </div>
 
-        <div className="text-xs font-medium uppercase tracking-widest mb-2 text-white/60">
+        <div
+          className="text-xs font-medium uppercase tracking-widest mb-2"
+          style={{ color: isActive ? 'rgba(255,255,255,0.75)' : 'rgba(255,255,255,0.5)' }}
+        >
           {domain.subtitle}
         </div>
         <h3 className="text-white font-light mb-4" style={{ fontSize: '22px', lineHeight: '1.2' }}>
           {domain.title}
         </h3>
-        <p className="text-white/75 text-sm leading-relaxed mb-6 flex-1">
+        <p
+          className="text-sm leading-relaxed mb-6 flex-1"
+          style={{ color: isActive ? 'rgba(255,255,255,0.85)' : 'rgba(255,255,255,0.65)' }}
+        >
           {domain.description}
         </p>
 
@@ -295,8 +345,8 @@ function DomainCard({ domain, onLaunch }) {
             <ArrowRight size={16} />
           </div>
         ) : (
-          <div className="text-sm font-medium text-white/50">
-          
+          <div className="text-xs font-semibold uppercase tracking-widest text-white/40">
+            Coming soon
           </div>
         )}
       </div>

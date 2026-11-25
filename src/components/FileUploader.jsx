@@ -2,8 +2,9 @@ import { useRef, useState } from "react";
 import { Upload, FileText, X } from "lucide-react";
 import { supabase } from "../lib/supabaseClient";
 
-const CAP_BLUE = '#0070AD';
-const CAP_BLUE_LIGHT = '#3A9DD4';
+const ONIX_RED = '#E31837';
+const ONIX_RED_DARK = '#B8122C';
+const ONIX_RED_LIGHT = '#FF4D63';
 
 export default function FileUploader({ onUploadComplete }) {
   const [files, setFiles] = useState([]);
@@ -70,11 +71,14 @@ export default function FileUploader({ onUploadComplete }) {
     setFiles(files.filter((_, i) => i !== index));
   };
 
+  const canUpload = !uploading && files.length > 0;
+
   return (
     <div
       style={{
         backgroundColor: 'rgba(255,255,255,0.03)',
-        border: `1px solid rgba(255,255,255,0.08)`,
+        border: '1px solid rgba(255,255,255,0.08)',
+        borderTop: `2px solid ${ONIX_RED}`,
         borderRadius: '8px',
         padding: '24px',
         backdropFilter: 'blur(10px)',
@@ -86,7 +90,7 @@ export default function FileUploader({ onUploadComplete }) {
           fontWeight: 600,
           letterSpacing: '0.2em',
           textTransform: 'uppercase',
-          color: CAP_BLUE_LIGHT,
+          color: ONIX_RED_LIGHT,
           marginBottom: '14px',
         }}
       >
@@ -100,19 +104,19 @@ export default function FileUploader({ onUploadComplete }) {
         onDrop={handleDrop}
         onClick={() => fileInputRef.current?.click()}
         style={{
-          border: `1.5px dashed ${isDragging ? CAP_BLUE_LIGHT : 'rgba(255,255,255,0.18)'}`,
+          border: `1.5px dashed ${isDragging ? ONIX_RED_LIGHT : 'rgba(255,255,255,0.18)'}`,
           borderRadius: '8px',
           padding: '36px 24px',
           textAlign: 'center',
           cursor: 'pointer',
-          backgroundColor: isDragging ? 'rgba(0,112,173,0.08)' : 'transparent',
+          backgroundColor: isDragging ? 'rgba(227,24,55,0.08)' : 'transparent',
           transition: 'all 200ms ease',
         }}
       >
         <Upload
           size={32}
           style={{
-            color: isDragging ? CAP_BLUE_LIGHT : 'rgba(255,255,255,0.4)',
+            color: isDragging ? ONIX_RED_LIGHT : 'rgba(255,255,255,0.4)',
             margin: '0 auto 14px',
             transition: 'color 200ms ease',
           }}
@@ -150,7 +154,7 @@ export default function FileUploader({ onUploadComplete }) {
                 marginBottom: '6px',
               }}
             >
-              <FileText size={16} style={{ color: CAP_BLUE_LIGHT, flexShrink: 0 }} />
+              <FileText size={16} style={{ color: ONIX_RED_LIGHT, flexShrink: 0 }} />
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ color: 'rgba(255,255,255,0.9)', fontSize: '13px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {file.name}
@@ -194,26 +198,26 @@ export default function FileUploader({ onUploadComplete }) {
 
       <button
         onClick={handleUpload}
-        disabled={uploading || !files.length}
+        disabled={!canUpload}
         style={{
           marginTop: '16px',
           width: '100%',
           padding: '12px 20px',
-          backgroundColor: !files.length || uploading ? 'rgba(255,255,255,0.08)' : CAP_BLUE,
-          color: !files.length || uploading ? 'rgba(255,255,255,0.4)' : 'white',
+          backgroundColor: canUpload ? ONIX_RED : 'rgba(255,255,255,0.08)',
+          color: canUpload ? 'white' : 'rgba(255,255,255,0.4)',
           border: 'none',
           borderRadius: '6px',
           fontSize: '13px',
           fontWeight: 600,
           letterSpacing: '0.05em',
-          cursor: uploading || !files.length ? 'not-allowed' : 'pointer',
+          cursor: canUpload ? 'pointer' : 'not-allowed',
           transition: 'background-color 200ms ease',
         }}
         onMouseEnter={(e) => {
-          if (!uploading && files.length) e.currentTarget.style.backgroundColor = '#005A8C';
+          if (canUpload) e.currentTarget.style.backgroundColor = ONIX_RED_DARK;
         }}
         onMouseLeave={(e) => {
-          if (!uploading && files.length) e.currentTarget.style.backgroundColor = CAP_BLUE;
+          if (canUpload) e.currentTarget.style.backgroundColor = ONIX_RED;
         }}
       >
         {uploading ? 'Uploading...' : files.length ? `Upload ${files.length} file${files.length !== 1 ? 's' : ''}` : 'Select files to upload'}

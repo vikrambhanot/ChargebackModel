@@ -4,9 +4,10 @@ import FileUploader from './FileUploader';
 import DocumentAnalysis from './DocumentAnalysis';
 import ComplianceAgentIntro from './ComplianceAgentIntro';
 
-// Capgemini palette
-const DEEP_NAVY = '#0B1426';
-const CAP_BLUE_LIGHT = '#3A9DD4';
+// Onix-aligned palette
+const INK = '#141414';
+const ONIX_RED = '#E31837';
+const ONIX_RED_LIGHT = '#FF4D63';
 
 const ROLLING_MESSAGES = [
   'Select a document to begin compliance review.',
@@ -49,19 +50,19 @@ export default function DocumentManagement() {
     <div
       style={{
         minHeight: '100vh',
-        backgroundColor: DEEP_NAVY,
+        backgroundColor: INK,
         position: 'relative',
         overflow: 'hidden',
       }}
     >
-      {/* Ambient gradients — same as intro */}
+      {/* Ambient gradients */}
       <div
         style={{
           position: 'absolute',
           inset: 0,
           background: `
-            radial-gradient(ellipse at 30% 20%, rgba(0,112,173,0.18) 0%, transparent 50%),
-            radial-gradient(ellipse at 70% 80%, rgba(0,112,173,0.10) 0%, transparent 50%)
+            radial-gradient(ellipse at 30% 20%, rgba(227,24,55,0.14) 0%, transparent 50%),
+            radial-gradient(ellipse at 70% 80%, rgba(227,24,55,0.07) 0%, transparent 50%)
           `,
           pointerEvents: 'none',
         }}
@@ -87,14 +88,27 @@ export default function DocumentManagement() {
         <div style={{ marginBottom: '48px', textAlign: 'center' }}>
           <div
             style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '10px',
               fontSize: '11px',
               fontWeight: 600,
               letterSpacing: '0.35em',
               textTransform: 'uppercase',
-              color: CAP_BLUE_LIGHT,
+              color: ONIX_RED_LIGHT,
               marginBottom: '18px',
             }}
           >
+            <span
+              aria-hidden="true"
+              style={{
+                width: 0,
+                height: 0,
+                borderLeft: '6px solid transparent',
+                borderRight: '6px solid transparent',
+                borderBottom: `10px solid ${ONIX_RED}`,
+              }}
+            />
             Compliance Review Agent · Active
           </div>
           <div
