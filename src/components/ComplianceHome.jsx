@@ -143,9 +143,9 @@ export default function ComplianceHome({ onLaunch }) {
               WebkitBackdropFilter: 'blur(8px)',
             }}
           >
-            <div className="text-xs font-medium text-white/80 uppercase tracking-widest mb-4">
+            {/* <div className="text-xs font-medium text-white/80 uppercase tracking-widest mb-4">
               Capgemini Financial Services
-            </div>
+            </div> */}
             <h1 className="text-white font-light tracking-tight mb-4" style={{ fontSize: '52px', lineHeight: '1.05' }}>
               The Compliance<br />Intelligence Platform
             </h1>
