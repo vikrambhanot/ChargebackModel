@@ -4,7 +4,7 @@ import DocumentManagement from './components/DocumentManagement';
 import ComplianceHome from './components/ComplianceHome';
 
 // Capgemini palette
-const NAVY = '#14213D';
+//const NAVY = '#14213D';
 const DEEP_NAVY = '#0B1426';
 const CAP_BLUE = '#0070AD';
 const OFF_WHITE = '#F5F5F0';
@@ -21,13 +21,13 @@ const App = () => {
           onClick={() => navigateTo('home')}
           className="flex items-center hover:opacity-90 transition-opacity"
         >
-          <div className="bg-white px-3 py-2 rounded">
+          {/* <div className="bg-white px-3 py-2 rounded">
             <img
               src="/capgemini-logo.png"
               alt="Capgemini"
               style={{ width: '140px', height: '32px', objectFit: 'contain' }}
             />
-          </div>
+          </div> */}
         </button>
 
         <div className="flex items-center gap-10 text-sm text-white">
@@ -71,13 +71,13 @@ const App = () => {
     <footer style={{ backgroundColor: DEEP_NAVY }} className="text-slate-200 mt-auto">
       <div className="max-w-7xl mx-auto px-6 py-10">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-6">
-          <div className="bg-white px-3 py-2 rounded inline-block">
+          {/* <div className="bg-white px-3 py-2 rounded inline-block">
             <img
               src="/capgemini-logo.png"
               alt="Capgemini"
               style={{ width: '140px', height: '32px', objectFit: 'contain' }}
             />
-          </div>
+          </div> */}
           <div className="flex flex-wrap gap-6 text-sm text-slate-400">
             <a href="#terms" className="hover:text-white transition-colors">Terms of Service</a>
             <a href="#privacy" className="hover:text-white transition-colors">Privacy Policy</a>
@@ -89,7 +89,7 @@ const App = () => {
         <div className="border-t pt-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
              style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
           <div className="text-xs text-slate-500">
-            © {new Date().getFullYear()} Capgemini. All rights reserved.
+            © {new Date().getFullYear()} . All rights reserved.
           </div>
           <div className="text-xs text-slate-500 italic max-w-2xl md:text-right">
             Demonstration environment. Analysis outputs are illustrative and do not constitute
